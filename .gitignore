@@ -1,0 +1,9 @@
+.DS_Store
+dump.rdb
+instance/
+*.pyc
+__pycache__/
+.idea/
+*.log
+*.env
+app.db
