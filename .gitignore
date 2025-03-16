@@ -4,6 +4,11 @@ instance/
 *.pyc
 __pycache__/
 .idea/
+.vscode/
 *.log
 *.env
 app.db
+venv/
+build/
+dist/
+*.egg-info/
