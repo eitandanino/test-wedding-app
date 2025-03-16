@@ -1,0 +1,68 @@
+{% extends "base.html" %} {% block content %}
+<div class="container">
+  <div class="row min-vh-75 align-items-center py-5">
+    <div class="col-lg-6 text-center text-lg-start">
+      <h1 class="display-4 mb-4">Create Beautiful Wedding Invitations</h1>
+      <p class="lead mb-4">
+        Design and manage your perfect wedding invitations with ease. Share your
+        special day with style and elegance.
+      </p>
+      <div class="d-flex gap-3 justify-content-center justify-content-lg-start">
+        <a href="{{ url_for('main.signup') }}" class="btn btn-primary">
+          <i class="fas fa-heart me-2"></i>Get Started
+        </a>
+        <a href="{{ url_for('main.login') }}" class="btn btn-outline-primary">
+          <i class="fas fa-sign-in-alt me-2"></i>Login
+        </a>
+      </div>
+    </div>
+    <div class="col-lg-6 mt-5 mt-lg-0 text-center">
+      <img
+        src="{{ url_for('static', filename='images/wedding-illustration.svg') }}"
+        alt="Wedding Illustration"
+        class="img-fluid"
+        style="max-width: 80%"
+      />
+    </div>
+  </div>
+
+  <div class="row py-5 mt-4">
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 p-4 text-center">
+        <div class="card-body">
+          <i class="fas fa-paint-brush fa-3x mb-4 text-primary"></i>
+          <h3 class="h4 mb-3">Beautiful Design</h3>
+          <p class="text-muted">
+            Create stunning invitations with our elegant templates and
+            customization options.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 p-4 text-center">
+        <div class="card-body">
+          <i class="fas fa-tasks fa-3x mb-4 text-primary"></i>
+          <h3 class="h4 mb-3">Easy Management</h3>
+          <p class="text-muted">
+            Track RSVPs, manage guest lists, and organize your wedding details
+            effortlessly.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 p-4 text-center">
+        <div class="card-body">
+          <i class="fas fa-share-alt fa-3x mb-4 text-primary"></i>
+          <h3 class="h4 mb-3">Simple Sharing</h3>
+          <p class="text-muted">
+            Share your invitations instantly with all your guests through
+            multiple channels.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

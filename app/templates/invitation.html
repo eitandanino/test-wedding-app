@@ -1,0 +1,387 @@
+{% extends "base.html" %} {% block content %}
+<style>
+  .invitation-page {
+    background-color: #f8fafc;
+    min-height: 100vh;
+    padding: 3rem 0;
+  }
+
+  .invitation-card {
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    padding: 3rem 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .couple-names {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-family: "Playfair Display", serif;
+  }
+
+  .wedding-date {
+    text-align: center;
+    color: #64748b;
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+  }
+
+  .invitation-image {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 16px;
+    margin-bottom: 2rem;
+  }
+
+  .details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .detail-item {
+    text-align: center;
+  }
+
+  .detail-label {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .detail-value {
+    color: #1e293b;
+    font-size: 1.1rem;
+  }
+
+  .rsvp-form {
+    background: #f1f5f9;
+    border-radius: 16px;
+    padding: 2rem;
+    margin-top: 2rem;
+  }
+
+  .form-title {
+    text-align: center;
+    font-size: 1.5rem;
+    color: #1e293b;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-control,
+  .form-select {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+  }
+
+  .form-control:focus,
+  .form-select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  }
+
+  .btn-rsvp {
+    width: 100%;
+    padding: 0.75rem;
+    font-weight: 500;
+    border-radius: 8px;
+    margin-top: 1rem;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .action-button {
+    flex: 1;
+    text-align: center;
+    padding: 0.75rem;
+    border-radius: 8px;
+    background: #f8fafc;
+    color: #475569;
+    text-decoration: none;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s;
+  }
+
+  .action-button:hover {
+    background: #f1f5f9;
+    color: #1e293b;
+  }
+
+  @media (max-width: 768px) {
+    .details-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .invitation-card {
+      margin: 0 1rem;
+      padding: 2rem 1rem;
+    }
+
+    .couple-names {
+      font-size: 2rem;
+    }
+  }
+  /* Add these new styles */
+  .attendance-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .attendance-button {
+    flex: 1;
+    padding: 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    background: white;
+    color: #64748b;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .attendance-button:hover {
+    border-color: #3b82f6;
+    color: #3b82f6;
+  }
+
+  .attendance-button.selected {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    color: white;
+  }
+
+  .attendance-button i {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+</style>
+
+<div class="invitation-page">
+  <div class="invitation-card">
+    <h1 class="couple-names">
+      {{ event.groom_name }} & {{ event.bride_name }}
+    </h1>
+    <div class="wedding-date">
+      {{ event.wedding_date.strftime('%B %d, %Y') }} {% if
+      event.hebrew_wedding_date %}
+      <br />{{ event.hebrew_wedding_date }} {% endif %}
+    </div>
+
+    {% if event.invitation_image %}
+    <img
+      src="{{ url_for('static', filename='uploads/' + event.invitation_image) }}"
+      alt="Wedding Invitation"
+      class="invitation-image"
+    />
+    {% endif %}
+
+    <div class="details-grid">
+      <div class="detail-item">
+        <div class="detail-label">Reception</div>
+        <div class="detail-value">{{ event.reception_time }}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Ceremony</div>
+        <div class="detail-value">{{ event.wedding_time }}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Venue</div>
+        <div class="detail-value">{{ event.hall_name }}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Location</div>
+        <div class="detail-value">{{ event.address }}</div>
+      </div>
+    </div>
+
+    {% if event.waze_link %}
+    <div class="text-center">
+      <a
+        href="{{ event.waze_link }}"
+        class="btn btn-outline-primary"
+        target="_blank"
+      >
+        <i class="fas fa-map-marker-alt me-2"></i>Navigate to Venue
+      </a>
+    </div>
+    {% endif %}
+
+    <div class="rsvp-form">
+      <h3 class="form-title">RSVP</h3>
+      <form
+        method="POST"
+        action="{{ url_for('main.invitation', link=event.link) }}"
+      >
+        {{ form.hidden_tag() }}
+        <div class="row g-3">
+          <div class="col-md-6">
+            {{ form.guest_name(class="form-control", placeholder="Your Name") }}
+          </div>
+          <div class="col-md-6">
+            {{ form.phone_number(class="form-control", placeholder="Phone
+            Number") }}
+            <div id="phone_number_error" class="text-danger mt-1"></div>
+          </div>
+          <div class="col-12 mb-3">
+            <label class="form-label">Will you attend?</label>
+            <div class="attendance-buttons">
+              {% for subfield in form.is_attending %}
+              <label class="attendance-button" for="{{ subfield.id }}">
+                {{ subfield(class="d-none") }}
+                <div>
+                  <i
+                    class="fas {% if loop.index0 == 0 %}fa-check-circle{% else %}fa-times-circle{% endif %}"
+                  ></i>
+                  <div>{{ subfield.label.text }}</div>
+                </div>
+              </label>
+              {% endfor %}
+            </div>
+          </div>
+          <div id="attending-fields" class="col-12" style="display: none">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label">Number of Guests</label>
+                {{ form.num_guests(class="form-control", min="1", max="10") }}
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Guest of</label>
+                {{ form.side(class="form-select") }}
+              </div>
+              <style>
+                .dietary-buttons {
+                  display: flex;
+                  gap: 0.75rem;
+                }
+
+                .dietary-button {
+                  flex: 1;
+                  padding: 0.75rem;
+                  border: 2px solid #e2e8f0;
+                  border-radius: 8px;
+                  background: white;
+                  color: #64748b;
+                  text-align: center;
+                  cursor: pointer;
+                  transition: all 0.2s;
+                }
+
+                .dietary-button:hover {
+                  border-color: #3b82f6;
+                  color: #3b82f6;
+                }
+
+                .dietary-button.selected {
+                  background: #3b82f6;
+                  border-color: #3b82f6;
+                  color: white;
+                }
+              </style>
+
+              <div class="col-md-4">
+                <label class="form-label">Vegetarian</label>
+                <div class="dietary-buttons">
+                  {% for subfield in form.is_vegetarian %}
+                  <label class="dietary-button" for="{{ subfield.id }}">
+                    {{ subfield(class="d-none") }}
+                    <div>
+                      <i
+                        class="fas {% if loop.index0 == 0 %}fa-check-circle{% else %}fa-times-circle{% endif %} mb-1"
+                      ></i>
+                      <div>{{ "Yes" if loop.index0 == 0 else "No" }}</div>
+                    </div>
+                  </label>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-rsvp mt-4">
+          Submit Response
+        </button>
+      </form>
+    </div>
+
+    <div class="action-buttons">
+      <a
+        href="{{ google_calendar_link }}"
+        class="action-button"
+        target="_blank"
+      >
+        <i class="far fa-calendar-plus me-2"></i>Add to Calendar
+      </a>
+      <button
+        onclick="navigator.share({url: window.location.href})"
+        class="action-button"
+      >
+        <i class="fas fa-share-alt me-2"></i>Share Invitation
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const attendingFields = document.getElementById("attending-fields");
+    const attendingYes = document.getElementById("is_attending-0");
+    const attendingNo = document.getElementById("is_attending-1");
+    const phoneNumberInput = document.getElementById("phone_number");
+    const phoneNumberError = document.getElementById("phone_number_error");
+    const form = document.querySelector("form");
+
+    function toggleAttendingFields() {
+      attendingFields.style.display = attendingYes.checked ? "block" : "none";
+    }
+
+    attendingYes.addEventListener("change", toggleAttendingFields);
+    attendingNo.addEventListener("change", toggleAttendingFields);
+    toggleAttendingFields();
+
+    // Add attendance button functionality
+    const attendanceButtons = document.querySelectorAll(".attendance-button");
+    attendanceButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        attendanceButtons.forEach((btn) => btn.classList.remove("selected"));
+        this.classList.add("selected");
+      });
+    });
+
+    // Add dietary button functionality
+    const dietaryButtons = document.querySelectorAll(".dietary-button");
+    dietaryButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        dietaryButtons.forEach((btn) => btn.classList.remove("selected"));
+        this.classList.add("selected");
+      });
+    });
+
+    // Phone validation
+    form.addEventListener("submit", function (event) {
+      const phoneNumber = phoneNumberInput.value.trim();
+      const phoneRegex = /^\d{10}$/;
+
+      if (!phoneRegex.test(phoneNumber)) {
+        event.preventDefault();
+        phoneNumberError.textContent = "Phone number must contain 10 digits.";
+      } else {
+        phoneNumberError.textContent = "";
+      }
+    });
+  });
+</script>
+{% endblock %}

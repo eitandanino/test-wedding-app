@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Admin Panel</h2>
+
+    <h3>Users</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Admin</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ 'Yes' if user.is_admin else 'No' }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3>Events</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Groom Name</th>
+                <th>Bride Name</th>
+                <th>Wedding Date</th>
+                <th>Creator</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in events %}
+                <tr>
+                    <td>{{ event.id }}</td>
+                    <td>{{ event.groom_name }}</td>
+                    <td>{{ event.bride_name }}</td>
+                    <td>{{ event.wedding_date.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ event.creator.username }}</td>
+                    <td>
+                        <a href="{{ url_for('main.admin_event_responses', event_id=event.id) }}" class="btn btn-info btn-sm">View Responses</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

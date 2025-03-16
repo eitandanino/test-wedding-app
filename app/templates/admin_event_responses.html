@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Responses for Event: {{ event.groom_name }} & {{ event.bride_name }}</h2>
+    <p>Wedding Date: {{ event.wedding_date.strftime('%Y-%m-%d') }}</p>
+
+    <!-- Upload Guest List Form -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Upload Guest List</h3>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('main.upload_guest_list', event_id=event.id) }}" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="guest_list" class="form-label">Upload Excel File</label>
+                    <input type="file" class="form-control" id="guest_list" name="guest_list" accept=".xlsx, .xls" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </form>
+            <p class="mt-3">
+                <a href="{{ url_for('main.download_template') }}" class="btn btn-secondary">Download Template</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Responses Table -->
+    <h3>Responses</h3>
+    {% if responses %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Guest Name</th>
+                    <th>Phone Number</th>
+                    <th>Attending</th>
+                    <th>Number of Guests</th>
+                    <th>Vegetarian</th>
+                    <th>Side</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for response in responses %}
+                    <tr>
+                        <td>{{ response.guest_name }}</td>
+                        <td>{{ response.phone_number }}</td>
+                        <td>{{ 'Yes' if response.is_attending else 'No' }}</td>
+                        <td>{{ response.num_guests }}</td>
+                        <td>{{ 'Yes' if response.is_vegetarian else 'No' }}</td>
+                        <td>{{ response.side }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No responses yet.</p>
+    {% endif %}
+
+    <!-- Download Responses Button -->
+    <div class="mt-4">
+        <a href="{{ url_for('main.export_responses', event_id=event.id) }}" class="btn btn-success">Download Responses</a>
+        <a href="{{ url_for('main.admin') }}" class="btn btn-secondary">Back to Admin Panel</a>
+    </div>
+</div>
+{% endblock %}

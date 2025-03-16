@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Edit Event</h2>
+    <form method="POST" action="{{ url_for('main.edit_event', event_id=event.id) }}" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.language.label(class="form-label") }}
+            {{ form.language(class="form-select") }}
+        </div>
+        <div class="mb-3">
+            {{ form.groom_name.label(class="form-label") }}
+            {{ form.groom_name(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.groom_father_name.label(class="form-label") }}
+            {{ form.groom_father_name(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.groom_mother_name.label(class="form-label") }}
+            {{ form.groom_mother_name(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.groom_last_name.label(class="form-label") }}
+            {{ form.groom_last_name(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.bride_name.label(class="form-label") }}
+            {{ form.bride_name(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.bride_father_name.label(class="form-label") }}
+            {{ form.bride_father_name(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.bride_mother_name.label(class="form-label") }}
+            {{ form.bride_mother_name(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.bride_last_name.label(class="form-label") }}
+            {{ form.bride_last_name(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.wedding_date.label(class="form-label") }}
+            {{ form.wedding_date(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.hebrew_wedding_date.label(class="form-label") }}
+            {{ form.hebrew_wedding_date(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.reception_time.label(class="form-label") }}
+            {{ form.reception_time() }}
+        </div>
+        <div class="mb-3">
+            {{ form.wedding_time.label(class="form-label") }}
+            {{ form.wedding_time() }}
+        </div>
+        <div class="mb-3">
+            {{ form.invitation_image.label(class="form-label") }}
+            {{ form.invitation_image(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.hall_name.label(class="form-label") }}
+            {{ form.hall_name(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.address.label(class="form-label") }}
+            {{ form.address(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.waze_link.label(class="form-label") }}
+            {{ form.waze_link(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.template.label(class="form-label") }}
+            {{ form.template(class="form-select") }}
+        </div>
+        <button type="submit" class="btn btn-primary">Update Event</button>
+    </form>
+</div>
+{% endblock %}
