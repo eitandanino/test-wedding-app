@@ -1,68 +1,288 @@
 {% extends "base.html" %} {% block content %}
-<div class="container">
-  <div class="row min-vh-75 align-items-center py-5">
-    <div class="col-lg-6 text-center text-lg-start">
-      <h1 class="display-4 mb-4">Create Beautiful Wedding Invitations</h1>
-      <p class="lead mb-4">
-        Design and manage your perfect wedding invitations with ease. Share your
-        special day with style and elegance.
-      </p>
-      <div class="d-flex gap-3 justify-content-center justify-content-lg-start">
-        <a href="{{ url_for('main.signup') }}" class="btn btn-primary">
-          <i class="fas fa-heart me-2"></i>Get Started
-        </a>
-        <a href="{{ url_for('main.login') }}" class="btn btn-outline-primary">
-          <i class="fas fa-sign-in-alt me-2"></i>Login
-        </a>
+<!-- Hero Section -->
+<section class="hero-section py-0">
+  <div class="container-fluid px-0">
+    <div class="row g-0 min-vh-100">
+      <div class="col-lg-6 d-flex align-items-center">
+        <div class="hero-content p-5 p-lg-5">
+          <h1 class="display-4 mb-4 fw-bold">
+            Create Stunning Wedding Invitations
+          </h1>
+          <p class="lead mb-4">
+            Design and manage your perfect wedding invitations with elegance.
+            Share your special day with style that reflects your unique love
+            story.
+          </p>
+          <div class="d-flex gap-3">
+            {% if current_user.is_authenticated %}
+            <a
+              href="{{ url_for('main.dashboard') }}"
+              class="btn btn-primary rounded-pill"
+            >
+              <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+            </a>
+            {% else %}
+            <a
+              href="{{ url_for('main.signup') }}"
+              class="btn btn-primary rounded-pill"
+            >
+              <i class="fas fa-heart me-2"></i>Get Started
+            </a>
+            <a
+              href="{{ url_for('main.login') }}"
+              class="btn btn-outline-primary rounded-pill"
+            >
+              <i class="fas fa-sign-in-alt me-2"></i>Login
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 hero-image-container p-0">
+        <img
+          src="{{ url_for('static', filename='images/wedding-illustration.svg') }}"
+          alt="Wedding Illustration"
+          class="hero-image floating-animation"
+        />
       </div>
     </div>
-    <div class="col-lg-6 mt-5 mt-lg-0 text-center">
-      <img
-        src="{{ url_for('static', filename='images/wedding-illustration.svg') }}"
-        alt="Wedding Illustration"
-        class="img-fluid"
-        style="max-width: 80%"
-      />
-    </div>
   </div>
+</section>
 
-  <div class="row py-5 mt-4">
-    <div class="col-md-4 mb-4">
-      <div class="card h-100 p-4 text-center">
-        <div class="card-body">
-          <i class="fas fa-paint-brush fa-3x mb-4 text-primary"></i>
-          <h3 class="h4 mb-3">Beautiful Design</h3>
-          <p class="text-muted">
-            Create stunning invitations with our elegant templates and
-            customization options.
-          </p>
+<!-- Features Section -->
+<section class="py-5 bg-white">
+  <div class="container py-4">
+    <div class="text-center mb-5">
+      <h2 class="display-5 mb-3">Why Choose Us</h2>
+      <p class="lead text-muted mx-auto" style="max-width: 700px">
+        Our platform offers everything you need to create and manage beautiful
+        wedding invitations
+      </p>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 p-4 text-center">
+          <div class="card-body">
+            <div class="feature-icon mb-4">
+              <img
+                src="{{ url_for('static', filename='images/design-icon.svg') }}"
+                alt="Design"
+                width="80"
+              />
+            </div>
+            <h3 class="h4 mb-3">Beautiful Design</h3>
+            <p class="text-muted">
+              Create stunning invitations with our elegant templates and
+              customization options that reflect your personal style.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 p-4 text-center">
+          <div class="card-body">
+            <div class="feature-icon mb-4">
+              <img
+                src="{{ url_for('static', filename='images/management-icon.svg') }}"
+                alt="Management"
+                width="80"
+              />
+            </div>
+            <h3 class="h4 mb-3">Easy Management</h3>
+            <p class="text-muted">
+              Track RSVPs, manage guest lists, and organize your wedding details
+              effortlessly with our intuitive tools.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 p-4 text-center">
+          <div class="card-body">
+            <div class="feature-icon mb-4">
+              <img
+                src="{{ url_for('static', filename='images/sharing-icon.svg') }}"
+                alt="Sharing"
+                width="80"
+              />
+            </div>
+            <h3 class="h4 mb-3">Simple Sharing</h3>
+            <p class="text-muted">
+              Share your invitations instantly with all your guests through
+              multiple channels with just a few clicks.
+            </p>
+          </div>
         </div>
       </div>
     </div>
-    <div class="col-md-4 mb-4">
-      <div class="card h-100 p-4 text-center">
-        <div class="card-body">
-          <i class="fas fa-tasks fa-3x mb-4 text-primary"></i>
-          <h3 class="h4 mb-3">Easy Management</h3>
-          <p class="text-muted">
-            Track RSVPs, manage guest lists, and organize your wedding details
-            effortlessly.
-          </p>
-        </div>
-      </div>
+  </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-5 bg-light">
+  <div class="container py-4">
+    <div class="text-center mb-5">
+      <h2 class="display-5 mb-3">Happy Couples</h2>
+      <p class="lead text-muted mx-auto" style="max-width: 700px">
+        See what our couples are saying about their experience
+      </p>
     </div>
-    <div class="col-md-4 mb-4">
-      <div class="card h-100 p-4 text-center">
-        <div class="card-body">
-          <i class="fas fa-share-alt fa-3x mb-4 text-primary"></i>
-          <h3 class="h4 mb-3">Simple Sharing</h3>
-          <p class="text-muted">
-            Share your invitations instantly with all your guests through
-            multiple channels.
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card border-0 shadow-sm p-4 mb-4">
+          <div class="d-flex align-items-center mb-4">
+            <img
+              src="{{ url_for('static', filename='images/couple-illustration.svg') }}"
+              alt="Couple"
+              width="60"
+              class="me-3"
+            />
+            <div>
+              <h5 class="mb-0">Sarah & Michael</h5>
+              <small class="text-muted">Wedding: June 2023</small>
+            </div>
+          </div>
+          <p class="mb-0 fst-italic">
+            "We absolutely loved how easy it was to create our wedding
+            invitations. The platform made managing RSVPs a breeze, and our
+            guests were impressed with the beautiful design. Highly recommend!"
           </p>
         </div>
       </div>
     </div>
   </div>
-</div>
+</section>
+
+<!-- CTA Section -->
+<section
+  class="py-5 text-white text-center"
+  style="
+    background-color: var(--primary-light);
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+  "
+>
+  <div class="container py-4">
+    <h2 class="display-5 mb-4">Ready to Create Your Wedding Invitation?</h2>
+    <p class="lead mb-4 mx-auto" style="max-width: 700px">
+      Join thousands of happy couples who have created beautiful wedding
+      invitations with our platform
+    </p>
+    {% if current_user.is_authenticated %}
+    <a href="{{ url_for('main.dashboard') }}" class="btn btn-lg btn-light">
+      <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+    </a>
+    {% else %}
+    <a href="{{ url_for('main.signup') }}" class="btn btn-lg btn-light">
+      <i class="fas fa-heart me-2"></i>Get Started Today
+    </a>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  .hero-section {
+    background: linear-gradient(
+      135deg,
+      rgba(248, 237, 235, 0.8) 0%,
+      rgba(255, 255, 255, 0.9) 100%
+    );
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 600px;
+  }
+
+  .hero-image-container {
+    background: linear-gradient(
+      135deg,
+      rgba(248, 237, 235, 0.9) 0%,
+      rgba(255, 255, 255, 0.95) 100%
+    );
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 0 0 40px;
+  }
+
+  .hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    max-width: none;
+  }
+
+  .hero-section::before {
+    content: "";
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background-color: rgba(157, 78, 221, 0.1);
+    z-index: 0;
+  }
+
+  .hero-section::after {
+    content: "";
+    position: absolute;
+    bottom: -50px;
+    left: -50px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background-color: rgba(157, 78, 221, 0.1);
+    z-index: 0;
+  }
+
+  .floating-animation {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
+
+  .feature-icon {
+    transition: all 0.3s ease;
+  }
+
+  .card {
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .card:hover .feature-icon {
+    transform: scale(1.1);
+  }
+
+  .btn {
+    border-radius: 30px;
+  }
+
+  @media (max-width: 768px) {
+    .hero-section {
+      text-align: center;
+    }
+
+    .hero-image-container {
+      min-height: 50vh;
+      border-radius: 0;
+    }
+  }
+</style>
 {% endblock %}

@@ -39,10 +39,12 @@
 
     <style>
       :root {
-        --primary-color: #007bff;
-        --primary-dark: #0056b3;
+        --primary-color: #9d4edd;
+        --primary-dark: #7b2cbf;
+        --primary-light: #c77dff;
         --text-color: #2c3e50;
         --light-bg: #f8f9fa;
+        --secondary-color: #f8edeb;
       }
 
       body {
@@ -74,6 +76,13 @@
         font-size: 1.8rem;
         font-weight: 700;
         color: var(--primary-color) !important;
+        margin-right: 2rem;
+      }
+
+      .logo-container {
+        position: relative;
+        z-index: 10;
+        margin-left: 15px;
       }
 
       .nav-link {
@@ -147,9 +156,16 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg">
       <div class="container-fluid">
-        <a class="navbar-brand" href="{{ url_for('main.home') }}"
-          >Wedding Invitation</a
+        <a
+          class="navbar-brand logo-container"
+          href="{{ url_for('main.home') }}"
         >
+          <img
+            src="{{ url_for('static', filename='images/invite2you-logo.svg') }}"
+            alt="invite2you"
+            height="50"
+          />
+        </a>
         <button
           class="navbar-toggler"
           type="button"
@@ -226,7 +242,7 @@
     </nav>
 
     <!-- Main Content -->
-    <div class="container mt-4 flex-grow-1">
+    <div class="container mt-4 flex-grow-1 mb-5">
       <!-- Flash Messages -->
       {% with messages = get_flashed_messages(with_categories=true) %} {% if
       messages %} {% for category, message in messages %}
@@ -239,8 +255,8 @@
 
     <!-- Footer -->
     <footer class="footer mt-auto">
-      <div class="container">
-        <p class="m-0">&copy; 2025 Wedding Invitation. All rights reserved.</p>
+      <div class="container text-center">
+        <p class="m-0">&copy; 2025 invite2you. All rights reserved.</p>
       </div>
     </footer>
 

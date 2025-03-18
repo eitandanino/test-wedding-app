@@ -1,174 +1,26 @@
 {% extends "base.html" %} {% block content %}
-<style>
-  .invitation-page {
-    background-color: #f8fafc;
-    min-height: 100vh;
-    padding: 3rem 0;
-  }
-
-  .invitation-card {
-    background: white;
-    border-radius: 24px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    padding: 3rem 2rem;
-    max-width: 800px;
-    margin: 0 auto;
-  }
-
-  .couple-names {
-    font-size: 2.5rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin-bottom: 1.5rem;
-    text-align: center;
-    font-family: "Playfair Display", serif;
-  }
-
-  .wedding-date {
-    text-align: center;
-    color: #64748b;
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
-  }
-
-  .invitation-image {
-    width: 100%;
-    max-height: 400px;
-    object-fit: cover;
-    border-radius: 16px;
-    margin-bottom: 2rem;
-  }
-
-  .details-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
-    margin-bottom: 3rem;
-  }
-
-  .detail-item {
-    text-align: center;
-  }
-
-  .detail-label {
-    color: #94a3b8;
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .detail-value {
-    color: #1e293b;
-    font-size: 1.1rem;
-  }
-
-  .rsvp-form {
-    background: #f1f5f9;
-    border-radius: 16px;
-    padding: 2rem;
-    margin-top: 2rem;
-  }
-
-  .form-title {
-    text-align: center;
-    font-size: 1.5rem;
-    color: #1e293b;
-    margin-bottom: 1.5rem;
-  }
-
-  .form-control,
-  .form-select {
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-  }
-
-  .form-control:focus,
-  .form-select:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
-  }
-
-  .btn-rsvp {
-    width: 100%;
-    padding: 0.75rem;
-    font-weight: 500;
-    border-radius: 8px;
-    margin-top: 1rem;
-  }
-
-  .action-buttons {
-    display: flex;
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-
-  .action-button {
-    flex: 1;
-    text-align: center;
-    padding: 0.75rem;
-    border-radius: 8px;
-    background: #f8fafc;
-    color: #475569;
-    text-decoration: none;
-    border: 1px solid #e2e8f0;
-    transition: all 0.2s;
-  }
-
-  .action-button:hover {
-    background: #f1f5f9;
-    color: #1e293b;
-  }
-
-  @media (max-width: 768px) {
-    .details-grid {
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-    }
-
-    .invitation-card {
-      margin: 0 1rem;
-      padding: 2rem 1rem;
-    }
-
-    .couple-names {
-      font-size: 2rem;
-    }
-  }
-  /* Add these new styles */
-  .attendance-buttons {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .attendance-button {
-    flex: 1;
-    padding: 1rem;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    background: white;
-    color: #64748b;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .attendance-button:hover {
-    border-color: #3b82f6;
-    color: #3b82f6;
-  }
-
-  .attendance-button.selected {
-    background: #3b82f6;
-    border-color: #3b82f6;
-    color: white;
-  }
-
-  .attendance-button i {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-  }
-</style>
+<!-- Load the appropriate template CSS based on the event's template choice -->
+{% if event.template == 'template1' %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/template1.css') }}"
+/>
+{% elif event.template == 'template2' %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/template2.css') }}"
+/>
+{% elif event.template == 'template3' %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/template3.css') }}"
+/>
+{% else %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/template1.css') }}"
+/>
+{% endif %}
 
 <div class="invitation-page">
   <div class="invitation-card">

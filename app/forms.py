@@ -37,7 +37,7 @@ class EventForm(FlaskForm):
     hall_name = StringField('Hall Name', validators=[DataRequired()])
     address = StringField('Address', validators=[DataRequired()])
     waze_link = StringField('Waze Link', validators=[DataRequired()])
-    template = SelectField('Template', choices=[('template1', 'Template 1'), ('template2', 'Template 2')])
+    template = SelectField('Template', choices=[('template1', 'Template 1'), ('template2', 'Template 2'), ('template3', 'Template 3')])
     submit = SubmitField('Create Event')
 
 
