@@ -1,0 +1,263 @@
+/* Template 3 - Romantic Floral Design */
+
+.invitation-page {
+  background-color: #fff5f5;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f8bbd0' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  min-height: 100vh;
+  padding: 3rem 0;
+}
+
+.invitation-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  padding: 3rem 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  border: 1px solid #f8bbd0;
+  position: relative;
+  overflow: hidden;
+}
+
+.invitation-card::before,
+.invitation-card::after {
+  content: "";
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24'%3E%3Cpath fill='%23f8bbd0' d='M12,1C7.03,1,3,5.03,3,10c0,10,9,13,9,13s9-3,9-13C21,5.03,16.97,1,12,1z M12,15c-2.76,0-5-2.24-5-5s2.24-5,5-5s5,2.24,5,5S14.76,15,12,15z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: 0.1;
+  z-index: 0;
+}
+
+.invitation-card::before {
+  top: -50px;
+  left: -50px;
+  transform: rotate(-30deg);
+}
+
+.invitation-card::after {
+  bottom: -50px;
+  right: -50px;
+  transform: rotate(30deg);
+}
+
+.couple-names {
+  font-size: 2.8rem;
+  font-weight: 400;
+  color: #d81b60;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-family: "Playfair Display", serif;
+  position: relative;
+  z-index: 1;
+}
+
+.wedding-date {
+  text-align: center;
+  color: #ad1457;
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  font-family: "Playfair Display", serif;
+  font-style: italic;
+  position: relative;
+  z-index: 1;
+}
+
+.invitation-image {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  border: 5px solid white;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  margin-bottom: 3rem;
+  position: relative;
+  z-index: 1;
+}
+
+.detail-item {
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #f8bbd0;
+}
+
+.detail-label {
+  color: #ad1457;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.detail-value {
+  color: #d81b60;
+  font-size: 1.1rem;
+}
+
+.rsvp-form {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-top: 2rem;
+  border: 1px solid #f8bbd0;
+  position: relative;
+  z-index: 1;
+}
+
+.form-title {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #d81b60;
+  margin-bottom: 1.5rem;
+  font-family: "Playfair Display", serif;
+}
+
+.form-control,
+.form-select {
+  border: 1px solid #f8bbd0;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #d81b60;
+  box-shadow: 0 0 0 2px rgba(216, 27, 96, 0.1);
+}
+
+.btn-rsvp {
+  width: 100%;
+  padding: 0.75rem;
+  font-weight: 500;
+  border-radius: 8px;
+  margin-top: 1rem;
+  background-color: #d81b60;
+  border-color: #d81b60;
+}
+
+.btn-rsvp:hover {
+  background-color: #ad1457;
+  border-color: #ad1457;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.action-button {
+  flex: 1;
+  text-align: center;
+  padding: 0.75rem;
+  border-radius: 8px;
+  background: white;
+  color: #d81b60;
+  text-decoration: none;
+  border: 1px solid #f8bbd0;
+  transition: all 0.2s;
+}
+
+.action-button:hover {
+  background: #fce4ec;
+  color: #ad1457;
+}
+
+.attendance-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.attendance-button {
+  flex: 1;
+  padding: 1rem;
+  border: 2px solid #f8bbd0;
+  border-radius: 12px;
+  background: white;
+  color: #d81b60;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.attendance-button:hover {
+  border-color: #d81b60;
+  color: #ad1457;
+}
+
+.attendance-button.selected {
+  background: #d81b60;
+  border-color: #d81b60;
+  color: white;
+}
+
+.attendance-button i {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.dietary-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.dietary-button {
+  flex: 1;
+  padding: 0.75rem;
+  border: 2px solid #f8bbd0;
+  border-radius: 8px;
+  background: white;
+  color: #d81b60;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dietary-button:hover {
+  border-color: #d81b60;
+  color: #ad1457;
+}
+
+.dietary-button.selected {
+  background: #d81b60;
+  border-color: #d81b60;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .details-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .invitation-card {
+    margin: 0 1rem;
+    padding: 2rem 1rem;
+  }
+
+  .couple-names {
+    font-size: 2.2rem;
+  }
+
+  .attendance-buttons,
+  .dietary-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}

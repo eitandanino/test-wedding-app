@@ -1,0 +1,238 @@
+/* Template 2 - Modern Minimalist Design */
+
+.invitation-page {
+  background-color: #f5f5f5;
+  background-image: linear-gradient(
+    to bottom right,
+    #f5f5f5 25%,
+    transparent 25%,
+    transparent 50%,
+    #f5f5f5 50%,
+    #f5f5f5 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 40px 40px;
+  min-height: 100vh;
+  padding: 3rem 0;
+}
+
+.invitation-card {
+  background: white;
+  border-radius: 0;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+  padding: 3rem 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  border-top: 5px solid #333;
+}
+
+.couple-names {
+  font-size: 2.5rem;
+  font-weight: 300;
+  color: #333;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-family: "Inter", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
+
+.wedding-date {
+  text-align: center;
+  color: #666;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  font-family: "Inter", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.invitation-image {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  margin-bottom: 2rem;
+  filter: grayscale(20%);
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  margin-bottom: 3rem;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  padding: 2rem 0;
+}
+
+.detail-item {
+  text-align: center;
+}
+
+.detail-label {
+  color: #999;
+  font-size: 0.8rem;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.detail-value {
+  color: #333;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.rsvp-form {
+  background: #f9f9f9;
+  padding: 2rem;
+  margin-top: 2rem;
+}
+
+.form-title {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 300;
+}
+
+.form-control,
+.form-select {
+  border: 1px solid #ddd;
+  border-radius: 0;
+  padding: 0.75rem 1rem;
+  background-color: white;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #333;
+  box-shadow: none;
+}
+
+.btn-rsvp {
+  width: 100%;
+  padding: 0.75rem;
+  font-weight: 500;
+  border-radius: 0;
+  margin-top: 1rem;
+  background-color: #333;
+  border-color: #333;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-rsvp:hover {
+  background-color: #000;
+  border-color: #000;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.action-button {
+  flex: 1;
+  text-align: center;
+  padding: 0.75rem;
+  border-radius: 0;
+  background: white;
+  color: #333;
+  text-decoration: none;
+  border: 1px solid #ddd;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.8rem;
+}
+
+.action-button:hover {
+  background: #f5f5f5;
+  color: #000;
+  border-color: #999;
+}
+
+.attendance-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.attendance-button {
+  flex: 1;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 0;
+  background: white;
+  color: #666;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.attendance-button:hover {
+  border-color: #333;
+  color: #333;
+}
+
+.attendance-button.selected {
+  background: #333;
+  border-color: #333;
+  color: white;
+}
+
+.attendance-button i {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.dietary-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.dietary-button {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 0;
+  background: white;
+  color: #666;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dietary-button:hover {
+  border-color: #333;
+  color: #333;
+}
+
+.dietary-button.selected {
+  background: #333;
+  border-color: #333;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .details-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .invitation-card {
+    margin: 0 1rem;
+    padding: 2rem 1rem;
+  }
+
+  .couple-names {
+    font-size: 2rem;
+  }
+}
