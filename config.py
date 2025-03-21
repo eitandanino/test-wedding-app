@@ -27,6 +27,8 @@ class Config:
         'Side': 'צד',
         'Responded': 'הגיב',
         'Normalized Phone Number': 'מספר טלפון מנורמל',
+        'Guest Status': 'סטטוס אורח',
+        'Table Number': 'מספר שולחן',
     }
 
     HEBREW_VALUES = {
