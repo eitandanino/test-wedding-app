@@ -281,11 +281,11 @@
                   </th>
                   <th>Guest Name</th>
                   <th>Phone</th>
-                  <th>Status</th>
+                  <th onclick="sortTable(3)">Status <i class="fas fa-sort"></i></th>
                   <th>Guests</th>
-                  <th>Side</th>
-                  <th>Guest Status</th>
-                  <th>Table Number</th>
+                  <th onclick="sortTable(5)">Side <i class="fas fa-sort"></i></th>
+                  <th onclick="sortTable(6)">Guest Status <i class="fas fa-sort"></i></th>
+                  <th onclick="sortTable(7)">Table Number <i class="fas fa-sort"></i></th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -445,6 +445,69 @@
       document.body.appendChild(form);
       form.submit();
     }
+  }
+</script>
+
+<script>
+  function sortTable(columnIndex) {
+    const table = document.querySelector('.table');
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    const isAsc = table.dataset.sort === `asc${columnIndex}`;
+
+    rows.sort((a, b) => {
+      let aValue, bValue;
+      
+      if (columnIndex === 3) { // Status column
+        const aStatus = a.children[columnIndex].querySelector('.badge').textContent.trim().toLowerCase();
+        const bStatus = b.children[columnIndex].querySelector('.badge').textContent.trim().toLowerCase();
+        return isAsc ? aStatus.localeCompare(bStatus) : bStatus.localeCompare(aStatus);
+      } else if (columnIndex === 7) { // Table Number column
+        const aInput = a.children[columnIndex].querySelector('input');
+        const bInput = b.children[columnIndex].querySelector('input');
+        aValue = aInput ? parseInt(aInput.value) || 0 : '-';
+        bValue = bInput ? parseInt(bInput.value) || 0 : '-';
+        
+        if (aValue === '-' && bValue === '-') return 0;
+        if (aValue === '-') return isAsc ? 1 : 1;
+        if (bValue === '-') return isAsc ? -1 : -1;
+        
+        return isAsc ? aValue - bValue : bValue - aValue;
+      } else if (columnIndex === 6) { // Guest Status column
+        const aSelect = a.children[columnIndex].querySelector('select');
+        const bSelect = b.children[columnIndex].querySelector('select');
+        aValue = aSelect ? aSelect.options[aSelect.selectedIndex].text.toLowerCase() : '-';
+        bValue = bSelect ? bSelect.options[bSelect.selectedIndex].text.toLowerCase() : '-';
+        
+        if (aValue === '-') return 1;
+        if (bValue === '-') return -1;
+        return isAsc ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+      } else {
+        aValue = a.children[columnIndex].textContent.trim().toLowerCase();
+        bValue = b.children[columnIndex].textContent.trim().toLowerCase();
+        
+        if (aValue === '-') return 1;
+        if (bValue === '-') return -1;
+        return isAsc ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+      }
+    });
+
+    // Remove existing rows
+    while (tbody.firstChild) {
+      tbody.removeChild(tbody.firstChild);
+    }
+
+    // Append sorted rows
+    rows.forEach(row => tbody.appendChild(row));
+
+    // Update sort indicator
+    table.querySelectorAll('th i').forEach(icon => icon.classList.remove('fa-sort-up', 'fa-sort-down'));
+    const sortIcon = table.querySelector(`th:nth-child(${columnIndex + 1}) i`);
+    sortIcon.classList.toggle('fa-sort-up', !isAsc);
+    sortIcon.classList.toggle('fa-sort-down', isAsc);
+
+    // Update sort state
+    table.dataset.sort = isAsc ? `desc${columnIndex}` : `asc${columnIndex}`;
   }
 </script>
 
