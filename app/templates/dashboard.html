@@ -213,7 +213,7 @@
       <div class="action-section">
         <h3 class="section-title">Guest List Management</h3>
         <div class="row g-3">
-          <div class="col-md-6">
+          <div class="col-12">
             <form
               method="POST"
               action="{{ url_for('main.upload_guest_list', event_id=event_data.event.id) }}"
@@ -234,8 +234,8 @@
               </div>
             </form>
           </div>
-          <div class="col-md-6">
-            <div class="d-flex gap-2">
+          <div class="col-12 mt-3">
+            <div class="d-flex gap-2 flex-wrap">
               <a
                 href="{{ url_for('main.download_template') }}"
                 class="btn btn-outline-secondary flex-grow-1"
@@ -249,8 +249,18 @@
               >
                 <i class="fas fa-file-export me-1"></i>Export
               </a>
-              <form id="exportForm{{ event_data.event.id }}" method="POST" action="{{ url_for('main.export_responses', event_id=event_data.event.id) }}" style="display: none;">
-              </form>
+              <a
+                href="{{ url_for('main.download_comparison', event_id=event_data.event.id) }}"
+                class="btn btn-outline-success flex-grow-1"
+              >
+                <i class="fas fa-file-excel me-1"></i>Download Comparison
+              </a>
+              <a
+                href="{{ url_for('main.view_guest_list', event_id=event_data.event.id) }}"
+                class="btn btn-outline-info flex-grow-1"
+              >
+                <i class="fas fa-users me-1"></i>View Guest List
+              </a>
               <button
                 class="btn btn-outline-primary flex-grow-1"
                 onclick="navigator.clipboard.writeText('{{ url_for('main.invitation', link=event_data.event.link, _external=True) }}')"

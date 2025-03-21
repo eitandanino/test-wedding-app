@@ -43,6 +43,7 @@ class Event(db.Model):
     template = db.Column(db.String(50))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     responses = db.relationship('Response', backref='event', lazy='dynamic')
+    guests = db.relationship('Guest', backref='event', lazy='dynamic')
 
 
 class Response(db.Model):
@@ -56,3 +57,14 @@ class Response(db.Model):
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'))
     guest_status = db.Column(db.String(50), nullable=True)
     table_number = db.Column(db.Integer, nullable=True)
+
+
+class Guest(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    guest_name = db.Column(db.String(100), nullable=False)
+    phone_number = db.Column(db.String(20), nullable=False)
+    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
+    upload_date = db.Column(db.DateTime, default=db.func.current_timestamp())
+    
+    def __repr__(self):
+        return f'<Guest {self.guest_name}>'
