@@ -347,7 +347,7 @@ def admin_event_responses(event_id):
     return render_template('admin_event_responses.html', event=event, responses=responses)
 
 
-@bp.route('/export_responses/<int:event_id>')
+@bp.route('/export_responses/<int:event_id>', methods=['POST'])
 @login_required
 def export_responses(event_id):
     event = Event.query.get_or_404(event_id)
@@ -517,3 +517,23 @@ def download_template():
         as_attachment=True,
         download_name='guest_list_template.xlsx'
     )
+
+
+@bp.route('/save_guest_details', methods=['POST'])
+@login_required
+def save_guest_details():
+    for key, value in request.form.items():
+        if key.startswith('guest_status_'):
+            response_id = key.replace('guest_status_', '')
+            response = Response.query.get(int(response_id))
+            if response:
+                response.guest_status = value if value else None
+        elif key.startswith('table_number_'):
+            response_id = key.replace('table_number_', '')
+            response = Response.query.get(int(response_id))
+            if response:
+                response.table_number = int(value) if value else None
+    
+    db.session.commit()
+    flash('Guest details updated successfully.', 'success')
+    return redirect(url_for('main.dashboard'))

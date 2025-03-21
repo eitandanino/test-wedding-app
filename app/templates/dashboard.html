@@ -245,9 +245,12 @@
               <a
                 href="{{ url_for('main.export_responses', event_id=event_data.event.id) }}"
                 class="btn btn-outline-primary flex-grow-1"
+                onclick="event.preventDefault(); document.getElementById('exportForm{{ event_data.event.id }}').submit();"
               >
                 <i class="fas fa-file-export me-1"></i>Export
               </a>
+              <form id="exportForm{{ event_data.event.id }}" method="POST" action="{{ url_for('main.export_responses', event_id=event_data.event.id) }}" style="display: none;">
+              </form>
               <button
                 class="btn btn-outline-primary flex-grow-1"
                 onclick="navigator.clipboard.writeText('{{ url_for('main.invitation', link=event_data.event.link, _external=True) }}')"
@@ -263,7 +266,7 @@
       <div class="table-section">
         <form
           method="post"
-          action="{{ url_for('main.delete_multiple_responses') }}"
+          action="{{ url_for('main.save_guest_details') }}"
         >
           <div class="table-responsive">
             <table class="table table-hover">
@@ -281,6 +284,8 @@
                   <th>Status</th>
                   <th>Guests</th>
                   <th>Side</th>
+                  <th>Guest Status</th>
+                  <th>Table Number</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -298,21 +303,35 @@
                   <td>{{ response.guest_name }}</td>
                   <td>{{ response.phone_number }}</td>
                   <td>
-                    <span
-                      class="badge {% if response.is_attending %}bg-success{% else %}bg-danger{% endif %}"
-                    >
-                      {{ 'Attending' if response.is_attending else 'Not
-                      Attending' }}
+                    <span class="badge {% if response.is_attending %}bg-success{% else %}bg-danger{% endif %}">
+                      {{ 'Attending' if response.is_attending else 'Not Attending' }}
                     </span>
                   </td>
                   <td>{{ response.num_guests or '-' }}</td>
                   <td>{{ response.side or '-' }}</td>
                   <td>
-                    <button
-                      type="button"
-                      class="btn btn-outline-danger btn-sm"
-                      onclick="deleteResponse('{{ response.id }}')"
-                    >
+                    {% if response.is_attending %}
+                    <select name="guest_status_{{ response.id }}" class="form-select form-select-sm">
+                      <option value="">Select Status</option>
+                      <option value="family_bride" {% if response.guest_status == 'family_bride' %}selected{% endif %}>Family Bride</option>
+                      <option value="friends_bride" {% if response.guest_status == 'friends_bride' %}selected{% endif %}>Friends Bride</option>
+                      <option value="family_groom" {% if response.guest_status == 'family_groom' %}selected{% endif %}>Family Groom</option>
+                      <option value="friends_groom" {% if response.guest_status == 'friends_groom' %}selected{% endif %}>Friends Groom</option>
+                      <option value="other" {% if response.guest_status == 'other' %}selected{% endif %}>Other</option>
+                    </select>
+                    {% else %}
+                    -
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if response.is_attending %}
+                    <input type="number" name="table_number_{{ response.id }}" value="{{ response.table_number or '' }}" class="form-control form-control-sm" min="1">
+                    {% else %}
+                    -
+                    {% endif %}        
+                  </td>
+                  <td>
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="deleteResponse('{{ response.id }}')">
                       <i class="fas fa-trash"></i>
                     </button>
                   </td>
@@ -321,9 +340,14 @@
               </tbody>
             </table>
           </div>
-          <button type="submit" class="btn btn-danger mt-3">
-            <i class="fas fa-trash me-1"></i>Delete Selected
-          </button>
+          <div class="d-flex gap-3 mt-3">
+            <button type="submit" formaction="{{ url_for('main.delete_multiple_responses') }}" class="btn btn-danger" onclick="return confirmDeleteSelected()">
+              <i class="fas fa-trash me-1"></i>Delete Selected
+            </button>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save me-1"></i>Save Changes
+            </button>
+          </div>
         </form>
       </div>
       {% else %}
@@ -392,6 +416,17 @@
       checkbox.checked = source.checked;
     }
   }
+
+
+  function confirmDeleteSelected() {
+    const checkedCount = document.querySelectorAll('input[name="response_ids"]:checked').length;
+    if (checkedCount === 0) {
+      alert('Please select at least one response to delete.');
+      return false;
+    }
+    return confirm(`Are you sure you want to delete ${checkedCount} selected response(s)?`);
+  }
+
 
   function deleteResponse(responseId) {
     if (!responseId) {
