@@ -140,6 +140,23 @@
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
       }
 
+      /* Language switcher styles */
+      .language-switcher-container {
+        margin-left: auto;
+        margin-right: 15px;
+      }
+
+      .language-switcher-container .nav-link {
+        color: var(--text-color);
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .language-switcher-container .nav-link:hover {
+        color: var(--primary-color);
+      }
+
       @media (max-width: 768px) {
         .navbar-brand {
           font-size: 1.5rem;
@@ -149,8 +166,28 @@
           text-align: center;
           padding: 0.75rem !important;
         }
+
+        /* Ensure language switcher is visible in mobile */
+        .language-switcher-container {
+          margin-left: 0;
+          margin-right: auto;
+          order: 2;
+        }
+
+        .navbar-toggler {
+          order: 3;
+        }
       }
     </style>
+    <script>
+      // Set language and direction before page renders
+      const storedLanguage = sessionStorage.getItem("selectedLanguage") || "en";
+      document.documentElement.setAttribute("lang", storedLanguage);
+      document.documentElement.setAttribute(
+        "dir",
+        storedLanguage === "he" ? "rtl" : "ltr"
+      );
+    </script>
   </head>
   <body class="d-flex flex-column min-vh-100">
     <!-- Navbar -->
@@ -166,6 +203,13 @@
             height="50"
           />
         </a>
+        <!-- Language switcher positioned outside the collapsible menu -->
+        <div class="language-switcher-container">
+          <a class="nav-link" href="#" id="language-switcher">
+            <i class="fas fa-globe me-1"></i
+            ><span class="language-text">Switch to Hebrew</span>
+          </a>
+        </div>
         <button
           class="navbar-toggler"
           type="button"
@@ -184,27 +228,32 @@
           <ul class="navbar-nav">
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('main.home') }}">
-                <i class="fas fa-home me-1"></i>Home
+                <i class="fas fa-home me-1"></i
+                ><span data-trans="home">Home</span>
               </a>
             </li>
             {% if current_user.is_authenticated %}
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('main.dashboard') }}">
-                <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                <i class="fas fa-tachometer-alt me-1"></i
+                ><span data-trans="dashboard">Dashboard</span>
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('main.create_event') }}">
-                <i class="fas fa-plus me-1"></i>Create Event
+                <i class="fas fa-plus me-1"></i
+                ><span data-trans="createEvent">Create Event</span>
               </a>
             </li>
             {% if current_user.is_admin %}
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('main.admin') }}">
-                <i class="fas fa-cog me-1"></i>Admin Panel
+                <i class="fas fa-cog me-1"></i
+                ><span data-trans="adminPanel">Admin Panel</span>
               </a>
             </li>
             {% endif %}
+
             <li class="nav-item dropdown">
               <a
                 class="nav-link dropdown-toggle"
@@ -219,7 +268,8 @@
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <li>
                   <a class="dropdown-item" href="{{ url_for('main.logout') }}">
-                    <i class="fas fa-sign-out-alt me-1"></i>Logout
+                    <i class="fas fa-sign-out-alt me-1"></i
+                    ><span data-trans="logout">Logout</span>
                   </a>
                 </li>
               </ul>
@@ -227,12 +277,14 @@
             {% else %}
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('main.login') }}">
-                <i class="fas fa-sign-in-alt me-1"></i>Login
+                <i class="fas fa-sign-in-alt me-1"></i
+                ><span data-trans="login">Login</span>
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('main.signup') }}">
-                <i class="fas fa-user-plus me-1"></i>Signup
+                <i class="fas fa-user-plus me-1"></i
+                ><span data-trans="signup">Signup</span>
               </a>
             </li>
             {% endif %}
@@ -256,12 +308,17 @@
     <!-- Footer -->
     <footer class="footer mt-auto">
       <div class="container text-center">
-        <p class="m-0">&copy; 2025 invite2you. All rights reserved.</p>
+        <p class="m-0" data-trans="copyright">
+          &copy; 2025 invite2you. All rights reserved.
+        </p>
       </div>
     </footer>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Translations -->
+    <script src="{{ url_for('static', filename='js/translations.js') }}"></script>
 
     <!-- Custom JS -->
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>

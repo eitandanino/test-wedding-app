@@ -213,7 +213,7 @@
       <div class="action-section">
         <h3 class="section-title">Guest List Management</h3>
         <div class="row g-3">
-          <div class="col-md-6">
+          <div class="col-12">
             <form
               method="POST"
               action="{{ url_for('main.upload_guest_list', event_id=event_data.event.id) }}"
@@ -234,8 +234,8 @@
               </div>
             </form>
           </div>
-          <div class="col-md-6">
-            <div class="d-flex gap-2">
+          <div class="col-12 mt-3">
+            <div class="d-flex gap-2 flex-wrap">
               <a
                 href="{{ url_for('main.download_template') }}"
                 class="btn btn-outline-secondary flex-grow-1"
@@ -245,8 +245,21 @@
               <a
                 href="{{ url_for('main.export_responses', event_id=event_data.event.id) }}"
                 class="btn btn-outline-primary flex-grow-1"
+                onclick="event.preventDefault(); document.getElementById('exportForm{{ event_data.event.id }}').submit();"
               >
                 <i class="fas fa-file-export me-1"></i>Export
+              </a>
+              <a
+                href="{{ url_for('main.download_comparison', event_id=event_data.event.id) }}"
+                class="btn btn-outline-success flex-grow-1"
+              >
+                <i class="fas fa-file-excel me-1"></i>Download Comparison
+              </a>
+              <a
+                href="{{ url_for('main.view_guest_list', event_id=event_data.event.id) }}"
+                class="btn btn-outline-info flex-grow-1"
+              >
+                <i class="fas fa-users me-1"></i>View Guest List
               </a>
               <button
                 class="btn btn-outline-primary flex-grow-1"
@@ -263,7 +276,7 @@
       <div class="table-section">
         <form
           method="post"
-          action="{{ url_for('main.delete_multiple_responses') }}"
+          action="{{ url_for('main.save_guest_details') }}"
         >
           <div class="table-responsive">
             <table class="table table-hover">
@@ -278,9 +291,11 @@
                   </th>
                   <th>Guest Name</th>
                   <th>Phone</th>
-                  <th>Status</th>
+                  <th onclick="sortTable(3)">Status <i class="fas fa-sort"></i></th>
                   <th>Guests</th>
-                  <th>Side</th>
+                  <th onclick="sortTable(5)">Side <i class="fas fa-sort"></i></th>
+                  <th onclick="sortTable(6)">Guest Status <i class="fas fa-sort"></i></th>
+                  <th onclick="sortTable(7)">Table Number <i class="fas fa-sort"></i></th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -298,21 +313,35 @@
                   <td>{{ response.guest_name }}</td>
                   <td>{{ response.phone_number }}</td>
                   <td>
-                    <span
-                      class="badge {% if response.is_attending %}bg-success{% else %}bg-danger{% endif %}"
-                    >
-                      {{ 'Attending' if response.is_attending else 'Not
-                      Attending' }}
+                    <span class="badge {% if response.is_attending %}bg-success{% else %}bg-danger{% endif %}">
+                      {{ 'Attending' if response.is_attending else 'Not Attending' }}
                     </span>
                   </td>
                   <td>{{ response.num_guests or '-' }}</td>
                   <td>{{ response.side or '-' }}</td>
                   <td>
-                    <button
-                      type="button"
-                      class="btn btn-outline-danger btn-sm"
-                      onclick="deleteResponse('{{ response.id }}')"
-                    >
+                    {% if response.is_attending %}
+                    <select name="guest_status_{{ response.id }}" class="form-select form-select-sm">
+                      <option value="">Select Status</option>
+                      <option value="family_bride" {% if response.guest_status == 'family_bride' %}selected{% endif %}>Family Bride</option>
+                      <option value="friends_bride" {% if response.guest_status == 'friends_bride' %}selected{% endif %}>Friends Bride</option>
+                      <option value="family_groom" {% if response.guest_status == 'family_groom' %}selected{% endif %}>Family Groom</option>
+                      <option value="friends_groom" {% if response.guest_status == 'friends_groom' %}selected{% endif %}>Friends Groom</option>
+                      <option value="other" {% if response.guest_status == 'other' %}selected{% endif %}>Other</option>
+                    </select>
+                    {% else %}
+                    -
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if response.is_attending %}
+                    <input type="number" name="table_number_{{ response.id }}" value="{{ response.table_number or '' }}" class="form-control form-control-sm" min="1">
+                    {% else %}
+                    -
+                    {% endif %}        
+                  </td>
+                  <td>
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="deleteResponse('{{ response.id }}')">
                       <i class="fas fa-trash"></i>
                     </button>
                   </td>
@@ -321,9 +350,14 @@
               </tbody>
             </table>
           </div>
-          <button type="submit" class="btn btn-danger mt-3">
-            <i class="fas fa-trash me-1"></i>Delete Selected
-          </button>
+          <div class="d-flex gap-3 mt-3">
+            <button type="submit" formaction="{{ url_for('main.delete_multiple_responses') }}" class="btn btn-danger" onclick="return confirmDeleteSelected()">
+              <i class="fas fa-trash me-1"></i>Delete Selected
+            </button>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save me-1"></i>Save Changes
+            </button>
+          </div>
         </form>
       </div>
       {% else %}
@@ -393,6 +427,17 @@
     }
   }
 
+
+  function confirmDeleteSelected() {
+    const checkedCount = document.querySelectorAll('input[name="response_ids"]:checked').length;
+    if (checkedCount === 0) {
+      alert('Please select at least one response to delete.');
+      return false;
+    }
+    return confirm(`Are you sure you want to delete ${checkedCount} selected response(s)?`);
+  }
+
+
   function deleteResponse(responseId) {
     if (!responseId) {
       console.error("Invalid response ID");
@@ -410,6 +455,69 @@
       document.body.appendChild(form);
       form.submit();
     }
+  }
+</script>
+
+<script>
+  function sortTable(columnIndex) {
+    const table = document.querySelector('.table');
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    const isAsc = table.dataset.sort === `asc${columnIndex}`;
+
+    rows.sort((a, b) => {
+      let aValue, bValue;
+      
+      if (columnIndex === 3) { // Status column
+        const aStatus = a.children[columnIndex].querySelector('.badge').textContent.trim().toLowerCase();
+        const bStatus = b.children[columnIndex].querySelector('.badge').textContent.trim().toLowerCase();
+        return isAsc ? aStatus.localeCompare(bStatus) : bStatus.localeCompare(aStatus);
+      } else if (columnIndex === 7) { // Table Number column
+        const aInput = a.children[columnIndex].querySelector('input');
+        const bInput = b.children[columnIndex].querySelector('input');
+        aValue = aInput ? parseInt(aInput.value) || 0 : '-';
+        bValue = bInput ? parseInt(bInput.value) || 0 : '-';
+        
+        if (aValue === '-' && bValue === '-') return 0;
+        if (aValue === '-') return isAsc ? 1 : 1;
+        if (bValue === '-') return isAsc ? -1 : -1;
+        
+        return isAsc ? aValue - bValue : bValue - aValue;
+      } else if (columnIndex === 6) { // Guest Status column
+        const aSelect = a.children[columnIndex].querySelector('select');
+        const bSelect = b.children[columnIndex].querySelector('select');
+        aValue = aSelect ? aSelect.options[aSelect.selectedIndex].text.toLowerCase() : '-';
+        bValue = bSelect ? bSelect.options[bSelect.selectedIndex].text.toLowerCase() : '-';
+        
+        if (aValue === '-') return 1;
+        if (bValue === '-') return -1;
+        return isAsc ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+      } else {
+        aValue = a.children[columnIndex].textContent.trim().toLowerCase();
+        bValue = b.children[columnIndex].textContent.trim().toLowerCase();
+        
+        if (aValue === '-') return 1;
+        if (bValue === '-') return -1;
+        return isAsc ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+      }
+    });
+
+    // Remove existing rows
+    while (tbody.firstChild) {
+      tbody.removeChild(tbody.firstChild);
+    }
+
+    // Append sorted rows
+    rows.forEach(row => tbody.appendChild(row));
+
+    // Update sort indicator
+    table.querySelectorAll('th i').forEach(icon => icon.classList.remove('fa-sort-up', 'fa-sort-down'));
+    const sortIcon = table.querySelector(`th:nth-child(${columnIndex + 1}) i`);
+    sortIcon.classList.toggle('fa-sort-up', !isAsc);
+    sortIcon.classList.toggle('fa-sort-down', isAsc);
+
+    // Update sort state
+    table.dataset.sort = isAsc ? `desc${columnIndex}` : `asc${columnIndex}`;
   }
 </script>
 

@@ -5,10 +5,10 @@
     <div class="row g-0 min-vh-100">
       <div class="col-lg-6 d-flex align-items-center">
         <div class="hero-content p-5 p-lg-5">
-          <h1 class="display-4 mb-4 fw-bold">
+          <h1 class="display-4 mb-4 fw-bold" data-trans="heroTitle">
             Create Stunning Wedding Invitations
           </h1>
-          <p class="lead mb-4">
+          <p class="lead mb-4" data-trans="heroDescription">
             Design and manage your perfect wedding invitations with elegance.
             Share your special day with style that reflects your unique love
             story.
@@ -26,13 +26,15 @@
               href="{{ url_for('main.signup') }}"
               class="btn btn-primary rounded-pill"
             >
-              <i class="fas fa-heart me-2"></i>Get Started
+              <i class="fas fa-heart me-2"></i>
+              <span data-trans="getStarted">Get Started</span>
             </a>
             <a
               href="{{ url_for('main.login') }}"
               class="btn btn-outline-primary rounded-pill"
             >
-              <i class="fas fa-sign-in-alt me-2"></i>Login
+              <i class="fas fa-sign-in-alt me-2"></i>
+              <span data-trans="login">Login</span>
             </a>
             {% endif %}
           </div>
@@ -53,8 +55,12 @@
 <section class="py-5 bg-white">
   <div class="container py-4">
     <div class="text-center mb-5">
-      <h2 class="display-5 mb-3">Why Choose Us</h2>
-      <p class="lead text-muted mx-auto" style="max-width: 700px">
+      <h2 class="display-5 mb-3" data-trans="whyChooseUs">Why Choose Us</h2>
+      <p
+        class="lead text-muted mx-auto"
+        style="max-width: 700px"
+        data-trans="platformDescription"
+      >
         Our platform offers everything you need to create and manage beautiful
         wedding invitations
       </p>
@@ -70,8 +76,10 @@
                 width="80"
               />
             </div>
-            <h3 class="h4 mb-3">Beautiful Design</h3>
-            <p class="text-muted">
+            <h3 class="h4 mb-3" data-trans="beautifulDesign">
+              Beautiful Design
+            </h3>
+            <p class="text-muted" data-trans="beautifulDesignDesc">
               Create stunning invitations with our elegant templates and
               customization options that reflect your personal style.
             </p>
@@ -88,8 +96,8 @@
                 width="80"
               />
             </div>
-            <h3 class="h4 mb-3">Easy Management</h3>
-            <p class="text-muted">
+            <h3 class="h4 mb-3" data-trans="easyManagement">Easy Management</h3>
+            <p class="text-muted" data-trans="easyManagementDesc">
               Track RSVPs, manage guest lists, and organize your wedding details
               effortlessly with our intuitive tools.
             </p>
@@ -106,8 +114,8 @@
                 width="80"
               />
             </div>
-            <h3 class="h4 mb-3">Simple Sharing</h3>
-            <p class="text-muted">
+            <h3 class="h4 mb-3" data-trans="simpleSharing">Simple Sharing</h3>
+            <p class="text-muted" data-trans="simpleSharingDesc">
               Share your invitations instantly with all your guests through
               multiple channels with just a few clicks.
             </p>
@@ -122,8 +130,12 @@
 <section class="py-5 bg-light">
   <div class="container py-4">
     <div class="text-center mb-5">
-      <h2 class="display-5 mb-3">Happy Couples</h2>
-      <p class="lead text-muted mx-auto" style="max-width: 700px">
+      <h2 class="display-5 mb-3" data-trans="happyCouples">Happy Couples</h2>
+      <p
+        class="lead text-muted mx-auto"
+        style="max-width: 700px"
+        data-trans="testimonialDesc"
+      >
         See what our couples are saying about their experience
       </p>
     </div>
@@ -138,11 +150,15 @@
               class="me-3"
             />
             <div>
-              <h5 class="mb-0">Sarah & Michael</h5>
-              <small class="text-muted">Wedding: June 2023</small>
+              <h5 class="mb-0" data-trans="testimonialCouple">
+                Sarah & Michael
+              </h5>
+              <small class="text-muted" data-trans="testimonialDate"
+                >Wedding: June 2023</small
+              >
             </div>
           </div>
-          <p class="mb-0 fst-italic">
+          <p class="mb-0 fst-italic" data-trans="testimonialText">
             "We absolutely loved how easy it was to create our wedding
             invitations. The platform made managing RSVPs a breeze, and our
             guests were impressed with the beautiful design. Highly recommend!"
@@ -157,13 +173,19 @@
 <section
   class="py-5 text-white text-center"
   style="
-    background-color: var(--primary-color);
+    background-color: var(--primary-light);
     border-radius: 0 0 var(--border-radius) var(--border-radius);
   "
 >
   <div class="container py-4">
-    <h2 class="display-5 mb-4">Ready to Create Your Wedding Invitation?</h2>
-    <p class="lead mb-4 mx-auto" style="max-width: 700px">
+    <h2 class="display-5 mb-4" data-trans="ctaTitle">
+      Ready to Create Your Wedding Invitation?
+    </h2>
+    <p
+      class="lead mb-4 mx-auto"
+      style="max-width: 700px"
+      data-trans="ctaDescription"
+    >
       Join thousands of happy couples who have created beautiful wedding
       invitations with our platform
     </p>
@@ -173,7 +195,8 @@
     </a>
     {% else %}
     <a href="{{ url_for('main.signup') }}" class="btn btn-lg btn-light">
-      <i class="fas fa-heart me-2"></i>Get Started Today
+      <i class="fas fa-heart me-2"></i>
+      <span data-trans="getStartedToday">Get Started Today</span>
     </a>
     {% endif %}
   </div>

@@ -12,7 +12,7 @@ from werkzeug.utils import secure_filename
 
 from app import db
 from app.utils import generate_random_link
-from app.models import User, Event, Response
+from app.models import User, Event, Response, Guest
 from app.forms import LoginForm, RegistrationForm, EventForm, ResponseForm
 
 # Create a Blueprint for routes
@@ -347,7 +347,7 @@ def admin_event_responses(event_id):
     return render_template('admin_event_responses.html', event=event, responses=responses)
 
 
-@bp.route('/export_responses/<int:event_id>')
+@bp.route('/export_responses/<int:event_id>', methods=['POST'])
 @login_required
 def export_responses(event_id):
     event = Event.query.get_or_404(event_id)
@@ -387,7 +387,6 @@ def export_responses(event_id):
 @bp.route('/upload_guest_list/<int:event_id>', methods=['POST'])
 @login_required
 def upload_guest_list(event_id):
-    print(event_id)
     if 'guest_list' not in request.files:
         flash('No file uploaded.', 'error')
         return redirect(url_for('main.dashboard'))
@@ -400,94 +399,37 @@ def upload_guest_list(event_id):
     try:
         # Read the Excel file
         df = pd.read_excel(file)
-
+        
         # Reverse the Hebrew headers to English for internal processing
         reverse_headers = {v: k for k, v in HEBREW_HEADERS.items()}
         df.rename(columns=reverse_headers, inplace=True)
-
-        # Ensure the file has the required columns
-        required_columns = ['Guest Name', 'Phone Number']
-        if not all(column in df.columns for column in required_columns):
-            flash('The uploaded file must contain "Guest Name" and "Phone Number" columns.', 'error')
+        
+        # Validate required columns
+        if 'Guest Name' not in df.columns or 'Phone Number' not in df.columns:
+            flash('Invalid file format. Missing required columns.', 'error')
             return redirect(url_for('main.dashboard'))
-
-        # Compare with responses in the database
-        responses = Response.query.filter_by(event_id=event_id).all()
-
-        # Normalize phone numbers in the database (remove leading 0)
-        responded_guests = {
-            response.phone_number.lstrip('0'): response for response in responses
-        }
-
-        # Normalize phone numbers in the uploaded file (remove leading 0)
-        df['Normalized Phone Number'] = df['Phone Number'].astype(str).str.lstrip('0')
-
-        # Identify people who have responded and are in the uploaded file
-        df['Responded'] = df['Normalized Phone Number'].apply(
-            lambda x: HEBREW_VALUES['Yes'] if x in responded_guests else HEBREW_VALUES['No']
-        )
-
-        # Create DataFrames for responded and not responded guests
-        responded_df = df[df['Responded'] == HEBREW_VALUES['Yes']].copy()
-        not_responded_df = df[df['Responded'] == HEBREW_VALUES['No']].copy()
-
-        # Add response details to the 'responded_df'
-        for index, row in responded_df.iterrows():
-            response = responded_guests.get(row['Normalized Phone Number'])
-            if response:
-                responded_df.loc[index, 'Attending'] = HEBREW_VALUES['Yes'] if response.is_attending else HEBREW_VALUES[
-                    'No']
-                responded_df.loc[index, 'Number of Guests'] = response.num_guests
-                responded_df.loc[index, 'Vegetarian'] = HEBREW_VALUES['Yes'] if response.is_vegetarian else \
-                    HEBREW_VALUES['No']
-                responded_df.loc[index, 'Side'] = HEBREW_VALUES[response.side]  # Translate the Side column
-
-        # Identify people who responded but are not in the uploaded file
-        uploaded_phone_numbers = set(df['Normalized Phone Number'].unique())
-        not_in_excel_responses = [
-            response for phone, response in responded_guests.items() if phone not in uploaded_phone_numbers
-        ]
-
-        # Add these people to the responded DataFrame
-        additional_responded_data = [{
-            'Guest Name': response.guest_name,
-            'Phone Number': response.phone_number,
-            'Attending': HEBREW_VALUES['Yes'] if response.is_attending else HEBREW_VALUES['No'],
-            'Number of Guests': response.num_guests,
-            'Vegetarian': HEBREW_VALUES['Yes'] if response.is_vegetarian else HEBREW_VALUES['No'],
-            'Side': HEBREW_VALUES[response.side],
-            'Responded': HEBREW_VALUES['Yes']
-        } for response in not_in_excel_responses]
-
-        additional_responded_df = pd.DataFrame(additional_responded_data)
-        responded_df = pd.concat([responded_df, additional_responded_df], ignore_index=True)
-
-        # Remove the normalized phone number column before saving
-        responded_df.drop(columns=['Normalized Phone Number'], inplace=True, errors='ignore')
-        not_responded_df.drop(columns=['Normalized Phone Number'], inplace=True, errors='ignore')
-
-        # Rename columns back to Hebrew headers before saving
-        responded_df.rename(columns=HEBREW_HEADERS, inplace=True)
-        not_responded_df.rename(columns=HEBREW_HEADERS, inplace=True)
-
-        # Save both DataFrames to the Excel file
-        output = BytesIO()
-        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-            responded_df.to_excel(writer, sheet_name='ענו', index=False)
-            not_responded_df.to_excel(writer, sheet_name='לא ענו', index=False)
-        output.seek(0)
-
-        # Send the file as a response
-        return send_file(
-            output,
-            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            as_attachment=True,
-            download_name='guest_list_split.xlsx'
-        )
-
+        
+        # Save the uploaded guest list to the database
+        event = Event.query.get_or_404(event_id)
+        
+        # First, delete any existing guests for this event to avoid duplicates
+        Guest.query.filter_by(event_id=event_id).delete()
+        
+        # Add new guests from the uploaded file
+        for index, row in df.iterrows():
+            guest = Guest(
+                guest_name=row['Guest Name'],
+                phone_number=str(row['Phone Number']),
+                event_id=event_id
+            )
+            db.session.add(guest)
+        
+        db.session.commit()
+        flash('Guest list saved to database successfully!', 'success')
+        return redirect(url_for('main.dashboard'))
+        
     except Exception as e:
-        print(f"Error processing file: {e}")
-        flash('Error processing the uploaded file. Please check the format.', 'error')
+        flash(f'Error processing the uploaded file: {str(e)}', 'error')
         return redirect(url_for('main.dashboard'))
 
 
