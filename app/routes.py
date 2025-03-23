@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import xlsxwriter  # Add this import
 from io import BytesIO
 from datetime import datetime
 from config import Config
@@ -572,3 +573,84 @@ def admin_bulk_sms(event_id):
         return redirect(url_for('main.admin_event_responses', event_id=event_id))
     
     return redirect(url_for('main.admin_send_sms', event_id=event_id))
+
+
+@bp.route('/delete_guest/<int:guest_id>', methods=['POST'])
+@login_required
+def delete_guest(guest_id):
+    guest = Guest.query.get_or_404(guest_id)
+    event = Event.query.get(guest.event_id)
+    
+    # Check if the current user is authorized to delete this guest
+    if event.user_id != current_user.id and not current_user.is_admin:
+        flash('You do not have permission to delete this guest.', 'error')
+        return redirect(url_for('main.dashboard'))
+    
+    db.session.delete(guest)
+    db.session.commit()
+    flash('Guest deleted successfully.', 'success')
+    return redirect(url_for('main.view_guest_list', event_id=event.id))
+
+
+@bp.route('/download_comparison/<int:event_id>', methods=['GET'])
+@login_required
+def download_comparison(event_id):
+    # Get the event
+    event = Event.query.get_or_404(event_id)
+    
+    # Check if the current user is authorized to access this event
+    if event.user_id != current_user.id and not current_user.is_admin:
+        flash('You do not have permission to access this event.', 'error')
+        return redirect(url_for('main.dashboard'))
+    
+    # Create a comparison Excel file
+    output = BytesIO()
+    workbook = xlsxwriter.Workbook(output)
+    worksheet = workbook.add_worksheet()
+    
+    # Add headers
+    headers = ['Guest Name', 'Phone Number', 'Attending', 'Number of Guests', 'Vegetarian', 'Side']
+    for col, header in enumerate(headers):
+        worksheet.write(0, col, header)
+    
+    # Get responses for this event
+    responses = Response.query.filter_by(event_id=event.id).all()
+    
+    # Write data
+    for row, response in enumerate(responses, start=1):
+        worksheet.write(row, 0, response.guest_name)
+        worksheet.write(row, 1, response.phone_number)
+        worksheet.write(row, 2, 'Yes' if response.is_attending else 'No')
+        worksheet.write(row, 3, response.num_guests or 0)
+        worksheet.write(row, 4, 'Yes' if response.is_vegetarian else 'No')
+        worksheet.write(row, 5, response.side or 'N/A')
+    
+    workbook.close()
+    output.seek(0)
+    
+    # Generate filename
+    filename = f"comparison_{event.groom_name}_{event.bride_name}.xlsx"
+    
+    return send_file(
+        output,
+        as_attachment=True,
+        download_name=filename,
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+
+
+@bp.route('/view_guest_list/<int:event_id>')
+@login_required
+def view_guest_list(event_id):
+    # Get the event
+    event = Event.query.get_or_404(event_id)
+    
+    # Check if the current user is authorized to access this event
+    if event.user_id != current_user.id and not current_user.is_admin:
+        flash('You do not have permission to access this event.', 'error')
+        return redirect(url_for('main.dashboard'))
+    
+    # Get all guests for this event
+    guests = Guest.query.filter_by(event_id=event.id).all()
+    
+    return render_template('view_guest_list.html', event=event, guests=guests)
