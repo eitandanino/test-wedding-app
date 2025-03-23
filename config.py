@@ -10,6 +10,10 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'postgresql://default-url')
     SUPABASE_URL = os.getenv('SUPABASE_URL')
     SUPABASE_KEY = os.getenv('SUPABASE_KEY')
+    
+    # SMS API configuration
+    SMS_API_TOKEN = os.getenv('SMS_API_TOKEN', '')
+    SMS_SENDER_NAME = os.getenv('SMS_SENDER_NAME', 'Invite2You')
 
     # Initialize Supabase client
     supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)

@@ -517,3 +517,116 @@ def download_template():
         as_attachment=True,
         download_name='guest_list_template.xlsx'
     )
+
+# Add these imports at the top of the file
+import pandas as pd
+from app.utils import send_sms
+
+# Add these routes after the existing admin routes
+
+@bp.route('/admin/send_sms/<int:event_id>', methods=['GET', 'POST'])
+@login_required
+def admin_send_sms(event_id):
+    # Ensure the current user is an admin
+    if not current_user.is_admin:
+        flash('You do not have permission to access this page.', 'error')
+        return redirect(url_for('main.dashboard'))
+    
+    event = Event.query.get_or_404(event_id)
+    responses = Response.query.filter_by(event_id=event.id).all()
+    
+    if request.method == 'POST':
+        message = request.form.get('message')
+        selected_guests = request.form.getlist('selected_guests')
+        
+        if not message:
+            flash('Please enter a message to send.', 'error')
+            return redirect(url_for('main.admin_send_sms', event_id=event_id))
+        
+        success_count = 0
+        error_count = 0
+        
+        for guest_id in selected_guests:
+            guest = Response.query.get(int(guest_id))
+            if guest and guest.phone_number:
+                # Replace placeholders in the message
+                personalized_message = message.replace('{name}', guest.guest_name)
+                personalized_message = personalized_message.replace('{event}', f"{event.groom_name} & {event.bride_name}")
+                
+                # Send the SMS
+                result = send_sms(guest.phone_number, personalized_message)
+                
+                if result.get('success', False):
+                    success_count += 1
+                else:
+                    error_count += 1
+        
+        if success_count > 0:
+            flash(f'Successfully sent {success_count} SMS messages.', 'success')
+        if error_count > 0:
+            flash(f'Failed to send {error_count} SMS messages.', 'error')
+            
+        return redirect(url_for('main.admin_event_responses', event_id=event_id))
+    
+    return render_template('admin_send_sms.html', event=event, responses=responses)
+
+
+@bp.route('/admin/bulk_sms/<int:event_id>', methods=['POST'])
+@login_required
+def admin_bulk_sms(event_id):
+    # Ensure the current user is an admin
+    if not current_user.is_admin:
+        flash('You do not have permission to access this page.', 'error')
+        return redirect(url_for('main.dashboard'))
+    
+    event = Event.query.get_or_404(event_id)
+    
+    if request.method == 'POST':
+        message = request.form.get('message')
+        send_to = request.form.get('send_to', 'all')
+        
+        if not message:
+            flash('Please enter a message to send.', 'error')
+            return redirect(url_for('main.admin_send_sms', event_id=event_id))
+        
+        # Get the appropriate guests based on the selection
+        if send_to == 'all':
+            guests = Response.query.filter_by(event_id=event.id).all()
+        elif send_to == 'attending':
+            guests = Response.query.filter_by(event_id=event.id, is_attending=True).all()
+        elif send_to == 'not_attending':
+            guests = Response.query.filter_by(event_id=event.id, is_attending=False).all()
+        elif send_to == 'not_responded':
+            # This requires more complex logic - get all phone numbers from the guest list
+            # that don't have a response
+            # For simplicity, we'll skip this implementation for now
+            flash('Sending to non-responded guests is not implemented yet.', 'error')
+            return redirect(url_for('main.admin_send_sms', event_id=event_id))
+        else:
+            guests = []
+        
+        success_count = 0
+        error_count = 0
+        
+        for guest in guests:
+            if guest.phone_number:
+                # Replace placeholders in the message
+                personalized_message = message.replace('{name}', guest.guest_name)
+                personalized_message = personalized_message.replace('{event}', f"{event.groom_name} & {event.bride_name}")
+                
+                # Send the SMS
+                result = send_sms(guest.phone_number, personalized_message)
+                
+                if result.get('success', False):
+                    success_count += 1
+                else:
+                    error_count += 1
+        
+        if success_count > 0:
+            flash(f'Successfully sent {success_count} SMS messages.', 'success')
+        if error_count > 0:
+            flash(f'Failed to send {error_count} SMS messages.', 'error')
+            
+        return redirect(url_for('main.admin_event_responses', event_id=event_id))
+    
+    return redirect(url_for('main.admin_send_sms', event_id=event_id))

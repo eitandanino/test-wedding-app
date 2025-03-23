@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Send SMS - {{ event.groom_name }} & {{ event.bride_name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Send SMS Messages - {{ event.groom_name }} & {{ event.bride_name }}</h1>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Bulk SMS</h3>
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('main.admin_bulk_sms', event_id=event.id) }}" method="post">
+                <div class="form-group mb-3">
+                    <label for="send_to">Send to:</label>
+                    <select class="form-control" id="send_to" name="send_to">
+                        <option value="all">All Guests</option>
+                        <option value="attending">Attending Guests</option>
+                        <option value="not_attending">Not Attending Guests</option>
+                    </select>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label for="bulk_message">Message:</label>
+                    <textarea class="form-control" id="bulk_message" name="message" rows="4" required></textarea>
+                    <small class="form-text text-muted">
+                        You can use {name} to include the guest's name and {event} to include the event name.
+                    </small>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Send Bulk SMS</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h3>Individual SMS</h3>
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('main.admin_send_sms', event_id=event.id) }}" method="post">
+                <div class="form-group mb-3">
+                    <label for="message">Message:</label>
+                    <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+                    <small class="form-text text-muted">
+                        You can use {name} to include the guest's name and {event} to include the event name.
+                    </small>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="select-all"></th>
+                                <th>Guest Name</th>
+                                <th>Phone Number</th>
+                                <th>Attending</th>
+                                <th>Number of Guests</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for response in responses %}
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="selected_guests" value="{{ response.id }}" class="guest-checkbox">
+                                </td>
+                                <td>{{ response.guest_name }}</td>
+                                <td>{{ response.phone_number }}</td>
+                                <td>{{ 'Yes' if response.is_attending else 'No' }}</td>
+                                <td>{{ response.num_guests or 0 }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Send Selected SMS</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="mt-3">
+        <a href="{{ url_for('main.admin_event_responses', event_id=event.id) }}" class="btn btn-secondary">Back to Responses</a>
+    </div>
+</div>
+
+<script>
+    document.getElementById('select-all').addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('.guest-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+    });
+</script>
+{% endblock %}
