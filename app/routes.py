@@ -72,16 +72,26 @@ def logout_page():
 def dashboard():
     # Fetch all events created by the current user
     events = current_user.events.all()
-
-    # Fetch responses for each event
+    
     event_responses = []
     for event in events:
         responses = Response.query.filter_by(event_id=event.id).all()
+        guests = Guest.query.filter_by(event_id=event.id).all()
+        
+        # Normalize phone numbers for comparison
+        guest_phones = {g.phone_number.lstrip('0') for g in guests}
+        response_phones = {r.phone_number.lstrip('0') for r in responses}
+        
+        # Calculate not responded count
+        not_responded_count = len(guest_phones - response_phones)
+        
         event_responses.append({
             'event': event,
-            'responses': responses
+            'responses': responses,
+            'guests': guests,
+            'not_responded_count': not_responded_count  # Add the calculated count
         })
-
+    
     return render_template('dashboard.html', event_responses=event_responses)
 
 
@@ -600,3 +610,35 @@ def view_guest_list(event_id):
     guests = Guest.query.filter_by(event_id=event_id).all()
     
     return render_template('guest_list.html', event=event, guests=guests)
+
+
+@bp.route('/get_guest_details/<int:response_id>')
+@login_required
+def get_guest_details(response_id):
+    response = Response.query.get_or_404(response_id)
+    return {
+        'guest_name': response.guest_name,
+        'phone_number': response.phone_number,
+        'num_guests': response.num_guests,
+        'side': response.side,
+        'table_number': response.table_number,
+        'is_attending': response.is_attending,  
+        'guest_status': response.guest_status, 
+        'is_vegetarian': response.is_vegetarian
+    }
+
+@bp.route('/update_guest/<int:response_id>', methods=['POST'])
+@login_required
+def update_guest(response_id):
+    response = Response.query.get_or_404(response_id)
+    response.guest_name = request.form['guest_name']
+    response.phone_number = request.form['phone_number']
+    response.num_guests = request.form['num_guests'] or None
+    response.side = request.form['side']
+    response.table_number = request.form['table_number'] or None
+    response.is_attending = request.form.get('is_attending') == 'true'
+    response.guest_status = request.form.get('guest_status')
+    response.is_vegetarian = request.form.get('is_vegetarian') == 'true'
+    db.session.commit()
+    flash('Guest details updated successfully!', 'success')
+    return redirect(url_for('main.dashboard'))

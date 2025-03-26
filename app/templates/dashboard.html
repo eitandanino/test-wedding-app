@@ -208,6 +208,12 @@
           </div>
           <div class="stat-label">Total Responses</div>
         </div>
+        <div class="stat-card">
+          <div class="stat-value text-warning">
+            {{ event_data.not_responded_count}}
+          </div>
+          <div class="stat-label">Not Responded</div>
+        </div>
       </div>
 
       <div class="action-section">
@@ -249,6 +255,9 @@
               >
                 <i class="fas fa-file-export me-1"></i>Export
               </a>
+              <form id="exportForm{{ event_data.event.id }}" method="POST" action="{{ url_for('main.export_responses', event_id=event_data.event.id) }}" style="display: none;">
+                <input type="hidden" name="event_id" value="{{ event_data.event.id }}">
+              </form>
               <a
                 href="{{ url_for('main.download_comparison', event_id=event_data.event.id) }}"
                 class="btn btn-outline-success flex-grow-1"
@@ -341,6 +350,11 @@
                     {% endif %}        
                   </td>
                   <td>
+                    <button type="button" class="btn btn-outline-primary btn-sm me-1" onclick="openEditModal('{{ response.id }}')">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                  </td>
+                  <td>
                     <button type="button" class="btn btn-outline-danger btn-sm" onclick="deleteResponse('{{ response.id }}')">
                       <i class="fas fa-trash"></i>
                     </button>
@@ -416,6 +430,75 @@
       </a>
     </div>
     {% endif %}
+  </div>
+
+  <div class="modal fade" id="editGuestModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Guest Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editGuestForm" method="POST">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Guest Name</label>
+                <input type="text" name="guest_name" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Phone Number</label>
+                <input type="tel" name="phone_number" class="form-control" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Number of Guests</label>
+                <input type="number" name="num_guests" class="form-control" min="1">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Side</label>
+                <select name="side" class="form-select">
+                  <option value="bride">Bride</option>
+                  <option value="groom">Groom</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Table Number</label>
+                <input type="number" name="table_number" class="form-control" min="1">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Status</label>
+                <select name="is_attending" class="form-select" required>
+                  <option value="true">Attending</option>
+                  <option value="false">Not Attending</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Guest Status</label>
+                <select name="guest_status" class="form-select">
+                  <option value="">Select Status</option>
+                  <option value="family_bride">Family Bride</option>
+                  <option value="friends_bride">Friends Bride</option>
+                  <option value="family_groom">Family Groom</option>
+                  <option value="friends_groom">Friends Groom</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Vegetarian</label>
+                <select name="is_vegetarian" class="form-select">
+                  <option value="true">Yes</option>
+                  <option value="false">No</option>
+                </select>
+              </div>
+            </div>
+            </div>
+            <div class="mt-3">
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -519,6 +602,27 @@
     // Update sort state
     table.dataset.sort = isAsc ? `desc${columnIndex}` : `asc${columnIndex}`;
   }
+</script>
+
+<script>
+  function openEditModal(responseId) {
+    fetch(`/get_guest_details/${responseId}`)
+      .then(response => response.json())
+      .then(data => {
+        const form = document.getElementById('editGuestForm');
+        form.action = `/update_guest/${responseId}`;
+        form.guest_name.value = data.guest_name;
+        form.phone_number.value = data.phone_number;
+        form.num_guests.value = data.num_guests || '';
+        form.side.value = data.side || 'bride';
+        form.table_number.value = data.table_number || '';
+        form.is_attending.value = data.is_attending ? 'true' : 'false';
+        form.guest_status.value = data.guest_status || '';
+        form.is_vegetarian.value = data.is_vegetarian ? 'true' : 'false';
+        
+        new bootstrap.Modal(document.getElementById('editGuestModal')).show();
+      });
+}
 </script>
 
 {% endblock %}
