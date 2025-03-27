@@ -240,10 +240,12 @@
               </a>
             </li>
             <li class="nav-item">
+              {% if not has_event %}
               <a class="nav-link" href="{{ url_for('main.create_event') }}">
                 <i class="fas fa-plus me-1"></i
                 ><span data-trans="createEvent">Create Event</span>
               </a>
+              {% endif %}
             </li>
             {% if current_user.is_admin %}
             <li class="nav-item">

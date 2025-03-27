@@ -72,6 +72,7 @@ def logout_page():
 def dashboard():
     # Fetch all events created by the current user
     events = current_user.events.all()
+    has_event = len(events) > 0
     
     event_responses = []
     for event in events:
@@ -89,10 +90,10 @@ def dashboard():
             'event': event,
             'responses': responses,
             'guests': guests,
-            'not_responded_count': not_responded_count  # Add the calculated count
+            'not_responded_count': not_responded_count
         })
     
-    return render_template('dashboard.html', event_responses=event_responses)
+    return render_template('dashboard.html', event_responses=event_responses, has_event=has_event)
 
 
 @bp.route('/create_event', methods=['GET', 'POST'])
@@ -235,29 +236,15 @@ def edit_event(event_id):
 @login_required
 def delete_event(event_id):
     event = Event.query.get_or_404(event_id)
-
-    # Check if the current user is the creator of the event
-    if event.user_id != current_user.id:
-        flash('You are not authorized to delete this event.', 'error')
-        return redirect(url_for('main.dashboard'))
-
-    # Delete the associated invitation image
-    if event.invitation_image:
-        image_path = os.path.join(current_app.config['UPLOAD_FOLDER'], event.invitation_image)
-        try:
-            os.remove(image_path)
-        except FileNotFoundError:
-            pass  # Ignore if the file doesn't exist
-
-    # Delete responses associated with the event
-    for response in event.responses:
-        db.session.delete(response)
-
-    # Delete the event itself
+    
+    # First delete all related guests
+    Guest.query.filter_by(event_id=event_id).delete()
+    
+    # Then delete the event
     db.session.delete(event)
     db.session.commit()
-
-    flash('Event deleted successfully.', 'success')
+    
+    flash('Event deleted successfully', 'success')
     return redirect(url_for('main.dashboard'))
 
 
@@ -429,17 +416,14 @@ def upload_guest_list(event_id):
         for index, row in df.iterrows():
             guest = Guest(
                 guest_name=row['Guest Name'],
-                phone_number=str(row['Phone Number']),
-                event_id=event_id
+                phone_number=row['Phone Number'],
+                event_id=event_id  # Ensure event_id is always set
             )
             db.session.add(guest)
-        
         db.session.commit()
-        flash('Guest list saved to database successfully!', 'success')
-        return redirect(url_for('main.dashboard'))
-        
     except Exception as e:
-        flash(f'Error processing the uploaded file: {str(e)}', 'error')
+        db.session.rollback()
+        flash(f'Error uploading guest list: {str(e)}', 'error')
         return redirect(url_for('main.dashboard'))
 
 
