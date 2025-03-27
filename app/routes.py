@@ -86,11 +86,15 @@ def dashboard():
         # Calculate not responded count
         not_responded_count = len(guest_phones - response_phones)
         
+        # Calculate detailed statistics
+        vegetarian_count = sum(1 for r in responses if r.is_vegetarian)
+        
         event_responses.append({
             'event': event,
             'responses': responses,
             'guests': guests,
-            'not_responded_count': not_responded_count
+            'not_responded_count': not_responded_count,
+            'vegetarian_count': vegetarian_count,
         })
     
     return render_template('dashboard.html', event_responses=event_responses, has_event=has_event)
