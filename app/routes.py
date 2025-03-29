@@ -630,3 +630,22 @@ def update_guest(response_id):
     db.session.commit()
     flash('Guest details updated successfully!', 'success')
     return redirect(url_for('main.dashboard'))
+
+
+@bp.route('/bulk_update_guests', methods=['POST'])
+@login_required
+def bulk_update_guests():
+    response_ids = request.form.get('response_ids').split(',')
+    responses = Response.query.filter(Response.id.in_(response_ids)).all()
+    
+    for response in responses:
+        if request.form.get('guest_status'):
+            response.guest_status = request.form['guest_status']
+        if request.form.get('table_number'):
+            response.table_number = int(request.form['table_number'])
+        if request.form.get('is_vegetarian') in ['true', 'false']:
+            response.is_vegetarian = request.form['is_vegetarian'] == 'true'
+    
+    db.session.commit()
+    flash('Guests updated successfully!', 'success')
+    return redirect(url_for('main.dashboard'))
