@@ -86,11 +86,15 @@ def dashboard():
         # Calculate not responded count
         not_responded_count = len(guest_phones - response_phones)
         
+        # Calculate detailed statistics
+        vegetarian_count = sum(1 for r in responses if r.is_vegetarian)
+        
         event_responses.append({
             'event': event,
             'responses': responses,
             'guests': guests,
-            'not_responded_count': not_responded_count
+            'not_responded_count': not_responded_count,
+            'vegetarian_count': vegetarian_count,
         })
     
     return render_template('dashboard.html', event_responses=event_responses, has_event=has_event)
@@ -625,4 +629,23 @@ def update_guest(response_id):
     response.is_vegetarian = request.form.get('is_vegetarian') == 'true'
     db.session.commit()
     flash('Guest details updated successfully!', 'success')
+    return redirect(url_for('main.dashboard'))
+
+
+@bp.route('/bulk_update_guests', methods=['POST'])
+@login_required
+def bulk_update_guests():
+    response_ids = request.form.get('response_ids').split(',')
+    responses = Response.query.filter(Response.id.in_(response_ids)).all()
+    
+    for response in responses:
+        if request.form.get('guest_status'):
+            response.guest_status = request.form['guest_status']
+        if request.form.get('table_number'):
+            response.table_number = int(request.form['table_number'])
+        if request.form.get('is_vegetarian') in ['true', 'false']:
+            response.is_vegetarian = request.form['is_vegetarian'] == 'true'
+    
+    db.session.commit()
+    flash('Guests updated successfully!', 'success')
     return redirect(url_for('main.dashboard'))
