@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#9d4edd;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#c77dff;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background Circle -->
+  <circle cx="100" cy="100" r="90" fill="#f8f9fa" opacity="0.5" />
+  
+  <!-- Bride Silhouette -->
+  <path d="M80,60 C75,70 70,90 70,120 L85,120 C85,100 90,80 95,70 Z" fill="#e8c5d8" />
+  <circle cx="85" cy="50" r="15" fill="#e8c5d8" />
+  
+  <!-- Groom Silhouette -->
+  <path d="M120,60 C125,70 130,90 130,120 L115,120 C115,100 110,80 105,70 Z" fill="#c1d3fe" />
+  <circle cx="115" cy="50" r="15" fill="#c1d3fe" />
+  
+  <!-- Heart -->
+  <path d="M100,130 C110,120 120,125 100,145 C80,125 90,120 100,130 Z" fill="url(#gradient)" opacity="0.8" />
+  
+  <!-- Decorative Elements -->
+  <path d="M60,150 L140,150" stroke="#d8c1e3" stroke-width="2" opacity="0.5" />
+  <path d="M70,160 L130,160" stroke="#d8c1e3" stroke-width="2" opacity="0.5" />
+</svg>

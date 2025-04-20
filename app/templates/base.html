@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wedding Invitation</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- FontAwesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+
+    <!-- Custom CSS -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+
+    <style>
+      :root {
+        --primary-color: #9d4edd;
+        --primary-dark: #7b2cbf;
+        --primary-light: #c77dff;
+        --text-color: #2c3e50;
+        --light-bg: #f8f9fa;
+        --secondary-color: #f8edeb;
+      }
+
+      body {
+        font-family: "Montserrat", sans-serif;
+        color: var(--text-color);
+        background-color: var(--light-bg);
+        line-height: 1.6;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family: "Cormorant Garamond", serif;
+        font-weight: 600;
+      }
+
+      .navbar {
+        background-color: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 1rem 0;
+      }
+
+      .navbar-brand {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--primary-color) !important;
+        margin-right: 2rem;
+      }
+
+      .logo-container {
+        position: relative;
+        z-index: 10;
+        margin-left: 15px;
+      }
+
+      .nav-link {
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem !important;
+        transition: all 0.3s ease;
+      }
+
+      .nav-link:hover {
+        color: var(--primary-color) !important;
+        transform: translateY(-1px);
+      }
+
+      .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        padding: 0.8rem 2rem;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary:hover {
+        background-color: var(--primary-dark);
+        border-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
+      }
+
+      .card {
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+      }
+
+      .footer {
+        background-color: #fff;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        padding: 2rem 0;
+        color: var(--text-color);
+      }
+
+      .alert {
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      }
+
+      /* Language switcher styles */
+      .language-switcher-container {
+        margin-left: auto;
+        margin-right: 15px;
+      }
+
+      .language-switcher-container .nav-link {
+        color: var(--text-color);
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .language-switcher-container .nav-link:hover {
+        color: var(--primary-color);
+      }
+
+      @media (max-width: 768px) {
+        .navbar-brand {
+          font-size: 1.5rem;
+        }
+
+        .nav-link {
+          text-align: center;
+          padding: 0.75rem !important;
+        }
+
+        /* Ensure language switcher is visible in mobile */
+        .language-switcher-container {
+          margin-left: 0;
+          margin-right: auto;
+          order: 2;
+        }
+
+        .navbar-toggler {
+          order: 3;
+        }
+      }
+    </style>
+    <script>
+      // Set language and direction before page renders
+      const storedLanguage = sessionStorage.getItem("selectedLanguage") || "en";
+      document.documentElement.setAttribute("lang", storedLanguage);
+      document.documentElement.setAttribute(
+        "dir",
+        storedLanguage === "he" ? "rtl" : "ltr"
+      );
+    </script>
+  </head>
+  <body class="d-flex flex-column min-vh-100">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+      <div class="container-fluid">
+        <a
+          class="navbar-brand logo-container"
+          href="{{ url_for('main.home') }}"
+        >
+          <img
+            src="{{ url_for('static', filename='images/invite2you-logo.svg') }}"
+            alt="invite2you"
+            height="50"
+          />
+        </a>
+        <!-- Language switcher positioned outside the collapsible menu -->
+        <div class="language-switcher-container">
+          <a class="nav-link" href="#" id="language-switcher">
+            <i class="fas fa-globe me-1"></i
+            ><span class="language-text">Switch to Hebrew</span>
+          </a>
+        </div>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div
+          class="collapse navbar-collapse justify-content-end"
+          id="navbarNav"
+        >
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('main.home') }}">
+                <i class="fas fa-home me-1"></i
+                ><span data-trans="home">Home</span>
+              </a>
+            </li>
+            {% if current_user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('main.dashboard') }}">
+                <i class="fas fa-tachometer-alt me-1"></i
+                ><span data-trans="dashboard">Dashboard</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              {% if current_user.is_authenticated and not
+              current_user.events.first() %}
+              <a class="nav-link" href="{{ url_for('main.create_event') }}">
+                <i class="fas fa-plus me-1"></i
+                ><span data-trans="createEvent">Create Event</span>
+              </a>
+              {% endif %}
+            </li>
+            {% if current_user.is_admin %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('main.admin') }}">
+                <i class="fas fa-cog me-1"></i
+                ><span data-trans="adminPanel">Admin Panel</span>
+              </a>
+            </li>
+            {% endif %}
+
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i class="fas fa-user me-1"></i>{{ current_user.username }}
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('main.logout') }}">
+                    <i class="fas fa-sign-out-alt me-1"></i
+                    ><span data-trans="logout">Logout</span>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('main.login') }}">
+                <i class="fas fa-sign-in-alt me-1"></i
+                ><span data-trans="login">Login</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('main.signup') }}">
+                <i class="fas fa-user-plus me-1"></i
+                ><span data-trans="signup">Signup</span>
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4 flex-grow-1 mb-5">
+      <!-- Flash Messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %} {% endif %} {% endwith %}
+
+      <!-- Page Content -->
+      {% block content %}{% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto">
+      <div class="container text-center">
+        <p class="m-0" data-trans="copyright">
+          &copy; 2025 invite2you. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Translations -->
+    <script src="{{ url_for('static', filename='js/translations.js') }}"></script>
+
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+  </body>
+</html>

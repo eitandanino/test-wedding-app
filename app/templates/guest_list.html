@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-12">
+      <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-secondary mb-3">
+        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+      </a>
+    </div>
+
+    <div class="guest-card">
+      <div class="guest-header">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h2 class="guest-title">Guest List Management</h2>
+            <div class="text-muted">
+              <i class="far fa-calendar-alt me-2"></i>
+              {{ event.wedding_date.strftime('%B %d, %Y') }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs Navigation -->
+      <ul class="nav nav-tabs mb-4 mt-4" id="responseTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab" aria-controls="all" aria-selected="true">All Guests</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="attending-tab" data-bs-toggle="tab" data-bs-target="#attending" type="button" role="tab" aria-controls="attending" aria-selected="false">Attending</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="not-attending-tab" data-bs-toggle="tab" data-bs-target="#not-attending" type="button" role="tab" aria-controls="not-attending" aria-selected="false">Not Attending</button>
+        </li>
+      </ul>
+
+      <!-- Tab Content -->
+      <div class="tab-content" id="responseTabsContent">
+        <!-- All Guests Tab -->
+        <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">
+          <h3>All Guests</h3>
+          {% if responses %}
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Guest Name</th>
+                    <th>Phone Number</th>
+                    <th>Attending</th>
+                    <th>Number of Guests</th>
+                    <th>Vegetarian</th>
+                    <th>Side</th>
+                    <th>Guest Status</th>
+                    <th>Table Number</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for response in responses %}
+                  <tr>
+                    <td>{{ response.guest_name }}</td>
+                    <td>{{ response.phone_number }}</td>
+                    <td>
+                      <span class="badge {% if response.is_attending %}bg-success{% else %}bg-danger{% endif %}">
+                        {{ 'Attending' if response.is_attending else 'Not Attending' }}
+                      </span>
+                    </td>
+                    <td>{{ response.num_guests or '-' }}</td>
+                    <td>{{ 'Yes' if response.is_vegetarian else 'No' }}</td>
+                    <td>{{ response.side or '-' }}</td>
+                    <td>{{ response.guest_status or '-' }}</td>
+                    <td>{{ response.table_number or '-' }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <p>No responses yet.</p>
+          {% endif %}
+        </div>
+
+        <!-- Attending Tab -->
+        <div class="tab-pane fade" id="attending" role="tabpanel" aria-labelledby="attending-tab">
+          <h3>Attending Guests</h3>
+          {% set attending_responses = responses|selectattr('is_attending', 'eq', true)|list %}
+          {% if attending_responses %}
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Guest Name</th>
+                    <th>Phone Number</th>
+                    <th>Number of Guests</th>
+                    <th>Vegetarian</th>
+                    <th>Side</th>
+                    <th>Guest Status</th>
+                    <th>Table Number</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for response in attending_responses %}
+                  <tr>
+                    <td>{{ response.guest_name }}</td>
+                    <td>{{ response.phone_number }}</td>
+                    <td>{{ response.num_guests or '-' }}</td>
+                    <td>{{ 'Yes' if response.is_vegetarian else 'No' }}</td>
+                    <td>{{ response.side or '-' }}</td>
+                    <td>{{ response.guest_status or '-' }}</td>
+                    <td>{{ response.table_number or '-' }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <p>No attending guests yet.</p>
+          {% endif %}
+        </div>
+
+        <!-- Not Attending Tab -->
+        <div class="tab-pane fade" id="not-attending" role="tabpanel" aria-labelledby="not-attending-tab">
+          <h3>Not Attending Guests</h3>
+          {% set not_attending_responses = responses|selectattr('is_attending', 'eq', false)|list %}
+          {% if not_attending_responses %}
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Guest Name</th>
+                    <th>Phone Number</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for response in not_attending_responses %}
+                  <tr>
+                    <td>{{ response.guest_name }}</td>
+                    <td>{{ response.phone_number }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <p>No guests have declined yet.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Upload Guest List Section -->
+      <div class="action-section mt-4">
+        <div class="d-flex justify-content-between">
+          <div>
+            {% if responses %}
+            <a href="{{ url_for('main.download_comparison', event_id=event.id) }}" class="btn btn-success">
+              <i class="fas fa-download me-2"></i>Download Comparison
+            </a>
+            {% endif %}
+          </div>
+          <form method="POST" action="{{ url_for('main.upload_guest_list', event_id=event.id) }}" enctype="multipart/form-data">
+            <div class="input-group">
+              <input type="file" class="form-control" id="guest_list" name="guest_list" accept=".xlsx, .xls" required />
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-upload me-1"></i>Upload New List
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
