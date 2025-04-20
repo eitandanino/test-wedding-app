@@ -24,6 +24,63 @@
         </div>
     </div>
 
+    <!-- Message Sending Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Send Messages to Guests</h3>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('main.send_messages', event_id=event.id) }}">
+                <div class="mb-3">
+                    <label class="form-label">Select Recipients</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="recipient_type" id="all_guests" value="all" checked>
+                        <label class="form-check-label" for="all_guests">All Guests</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="recipient_type" id="attending_guests" value="attending">
+                        <label class="form-check-label" for="attending_guests">Attending Guests</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="recipient_type" id="not_attending_guests" value="not_attending">
+                        <label class="form-check-label" for="not_attending_guests">Not Attending Guests</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="recipient_type" id="not_responded_guests" value="not_responded">
+                        <label class="form-check-label" for="not_responded_guests">Not Responded Guests</label>
+                    </div>
+                </div>
+                
+                <!-- Message Type Selection -->
+                <div class="mb-3">
+                    <label class="form-label">Message Type</label>
+                    <select name="message_type" id="messageTypeSelect" class="form-select" onchange="updateMessageTemplate()">
+                        <option value="custom">Custom Message</option>
+                        <option value="first_invitation">First Invitation</option>
+                        <option value="reminder">Reminder Message</option>
+                        <option value="day_of">Day of Wedding Message</option>
+                        <option value="day_after">Day After Wedding Message</option>
+                        <option value="table_assignment">Table Assignment</option>
+                        <option value="parking_info">Parking Information</option>
+                    </select>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="message_subject" class="form-label">Message Subject</label>
+                    <input type="text" class="form-control" id="message_subject" name="subject" required>
+                </div>
+                <div class="mb-3">
+                    <label for="message_content" class="form-label">Message Content</label>
+                    <textarea class="form-control" id="message_content" name="content" rows="5" required></textarea>
+                    <small id="placeholderNote" class="form-text text-muted">
+                        You can use the following placeholders: {guest_name}, {event_date}, {event_location}
+                    </small>
+                </div>
+                <button type="submit" class="btn btn-primary">Send Messages</button>
+            </form>
+        </div>
+    </div>
+
     <!-- Tabs Navigation -->
     <ul class="nav nav-tabs mb-4" id="responseTabs" role="tablist">
         <li class="nav-item" role="presentation">
@@ -137,4 +194,63 @@
         <a href="{{ url_for('main.admin') }}" class="btn btn-secondary">Back to Admin Panel</a>
     </div>
 </div>
+
+<script>
+    function updateMessageTemplate() {
+        const messageType = document.getElementById('messageTypeSelect').value;
+        const subjectField = document.getElementById('message_subject');
+        const contentField = document.getElementById('message_content');
+        
+        // Define templates for different message types
+        const templates = {
+            custom: {
+                subject: "",
+                content: ""
+            },
+            first_invitation: {
+                subject: "Wedding Invitation: {{ event.groom_name }} & {{ event.bride_name }}",
+                content: "Dear {guest_name},\n\nWe are delighted to invite you to celebrate our wedding on {event_date} at {event_location}.\n\nPlease RSVP by clicking on the link in our previous message.\n\nWe look forward to celebrating with you!\n\n{{ event.groom_name }} & {{ event.bride_name }}"
+            },
+            reminder: {
+                subject: "Reminder: {{ event.groom_name }} & {{ event.bride_name }}'s Wedding",
+                content: "Dear {guest_name},\n\nThis is a friendly reminder about our upcoming wedding on {event_date} at {event_location}.\n\nIf you haven't already, please RSVP as soon as possible.\n\nWe can't wait to see you!\n\n{{ event.groom_name }} & {{ event.bride_name }}"
+            },
+            day_of: {
+                subject: "Today's the Day! {{ event.groom_name }} & {{ event.bride_name }}'s Wedding",
+                content: "Dear {guest_name},\n\nToday's the day! We're excited to celebrate with you at our wedding.\n\nThe ceremony begins at {{ event.wedding_time }} at {event_location}.\n\nSee you soon!\n\n{{ event.groom_name }} & {{ event.bride_name }}"
+            },
+            day_after: {
+                subject: "Thank You from {{ event.groom_name }} & {{ event.bride_name }}",
+                content: "Dear {guest_name},\n\nThank you for being part of our special day yesterday. Your presence made our wedding truly memorable.\n\nWe are grateful for your love and support.\n\nWith love,\n{{ event.groom_name }} & {{ event.bride_name }}"
+            },
+            table_assignment: {
+                subject: "Table Assignment: {{ event.groom_name }} & {{ event.bride_name }}'s Wedding",
+                content: "Dear {guest_name},\n\nWe're excited to see you at our wedding on {event_date}!\n\nYour table number is: {table_number}\n\nLooking forward to celebrating with you!\n\n{{ event.groom_name }} & {{ event.bride_name }}"
+            },
+            parking_info: {
+                subject: "Parking Information: {{ event.groom_name }} & {{ event.bride_name }}'s Wedding",
+                content: "Dear {guest_name},\n\nAs our wedding day approaches, we wanted to share some parking information for the venue.\n\nParking is available at {event_location}. Please follow the signs for wedding guest parking.\n\nSee you on {event_date}!\n\n{{ event.groom_name }} & {{ event.bride_name }}"
+            }
+        };
+        
+        // Update fields with selected template
+        if (messageType in templates) {
+            subjectField.value = templates[messageType].subject;
+            contentField.value = templates[messageType].content;
+        }
+        
+        // Show/hide table number placeholder note based on message type
+        const placeholderNote = document.getElementById('placeholderNote');
+        if (messageType === 'table_assignment') {
+            placeholderNote.innerHTML = 'You can use the following placeholders: {guest_name}, {event_date}, {event_location}, {table_number}';
+        } else {
+            placeholderNote.innerHTML = 'You can use the following placeholders: {guest_name}, {event_date}, {event_location}';
+        }
+    }
+    
+    // Initialize with default template when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        updateMessageTemplate();
+    });
+</script>
 {% endblock %}

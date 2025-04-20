@@ -652,3 +652,81 @@ def bulk_update_guests():
     db.session.commit()
     flash('Guests updated successfully!', 'success')
     return redirect(url_for('main.dashboard'))
+
+
+@bp.route('/admin/send_messages/<int:event_id>', methods=['POST'])
+@login_required
+def send_messages(event_id):
+    # Ensure the current user is an admin
+    if not current_user.is_admin:
+        flash('You do not have permission to send messages.', 'error')
+        return redirect(url_for('main.dashboard'))
+    
+    event = Event.query.get_or_404(event_id)
+    recipient_type = request.form.get('recipient_type', 'all')
+    message_type = request.form.get('message_type', 'custom')
+    subject = request.form.get('subject')
+    content = request.form.get('content')
+    
+    # Get the appropriate recipients based on selection
+    if recipient_type == 'all':
+        responses = Response.query.filter_by(event_id=event_id).all()
+    elif recipient_type == 'attending':
+        responses = Response.query.filter_by(event_id=event_id, is_attending=True).all()
+    elif recipient_type == 'not_attending':
+        responses = Response.query.filter_by(event_id=event_id, is_attending=False).all()
+    elif recipient_type == 'not_responded':
+        # Get all guests who haven't responded
+        guests = Guest.query.filter_by(event_id=event_id).all()
+        responses = Response.query.filter_by(event_id=event_id).all()
+        
+        # Get phone numbers of those who responded
+        responded_phones = {response.phone_number.lstrip('0') for response in responses}
+        
+        # Filter guests who haven't responded
+        not_responded_guests = [guest for guest in guests 
+                               if guest.phone_number.lstrip('0') not in responded_phones]
+        
+        # Create a list of "fake" responses for the not_responded guests
+        responses = []
+        for guest in not_responded_guests:
+            # Create a temporary Response object (not saved to DB)
+            temp_response = type('obj', (object,), {
+                'guest_name': guest.guest_name,
+                'phone_number': guest.phone_number
+            })
+            responses.append(temp_response)
+    
+    # Count of recipients
+    recipient_count = len(responses)
+    
+    if recipient_count == 0:
+        flash('No recipients found for the selected criteria.', 'warning')
+        return redirect(url_for('main.admin_event_responses', event_id=event_id))
+    
+    # Log the message type for analytics
+    print(f"Sending {message_type} message to {recipient_count} recipients")
+    
+    # Process each message with placeholders
+    for response in responses:
+        # Replace placeholders in the message
+        personalized_content = content.replace('{guest_name}', response.guest_name)
+        personalized_content = personalized_content.replace('{event_date}', event.wedding_date.strftime('%Y-%m-%d'))
+        personalized_content = personalized_content.replace('{event_location}', event.address)
+        
+        # Add table number placeholder for table assignment messages
+        if message_type == 'table_assignment' and hasattr(response, 'table_number') and response.table_number:
+            personalized_content = personalized_content.replace('{table_number}', str(response.table_number))
+        elif message_type == 'table_assignment':
+            # Skip sending to guests without table assignments
+            continue
+        
+        # Here you would call your SMS service API
+        # For example: send_sms(response.phone_number, personalized_content)
+        
+        # For demonstration, just print to console
+        print(f"Sending to {response.phone_number}: {subject} - {personalized_content}")
+    
+    # Log the message sending activity
+    flash(f'{message_type.replace("_", " ").title()} message sent to {recipient_count} recipients.', 'success')
+    return redirect(url_for('main.admin_event_responses', event_id=event_id))
