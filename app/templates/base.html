@@ -142,8 +142,6 @@
 
       /* Language switcher styles */
       .language-switcher-container {
-        margin-left: auto;
-        margin-right: 15px;
         position: fixed;
         top: 15px;
         right: 15px;
@@ -164,52 +162,16 @@
         color: var(--primary-color);
         background-color: rgba(255, 255, 255, 1);
       }
-
-      /* Ensure RTL/LTR transitions are smooth */
-      body, .navbar, .container, .btn, .nav-link {
-        transition: all 0.3s ease-in-out;
-      }
-
-      /* Fix button positions in both LTR and RTL modes */
+      
+      /* Fix RTL positioning */
       html[dir="rtl"] .language-switcher-container {
         right: auto;
         left: 15px;
       }
 
-      /* Ensure other buttons maintain position */
-      .btn, .nav-item {
-        position: relative;
-      }
-
       @media (max-width: 768px) {
-        .navbar-brand {
-          font-size: 1.5rem;
-        }
-
-        .nav-link {
-          text-align: center;
-          padding: 0.75rem !important;
-        }
-
-        /* Ensure language switcher is visible in mobile */
         .language-switcher-container {
-          position: absolute;
           top: 15px;
-          right: 70px;
-          margin-left: 0;
-          margin-right: 0;
-          z-index: 1031;
-        }
-
-        html[dir="rtl"] .language-switcher-container {
-          right: auto;
-          left: 70px;
-        }
-
-        .navbar-toggler {
-          order: 3;
-          position: relative;
-          z-index: 1030;
         }
       }
 
@@ -243,13 +205,7 @@
             height="50"
           />
         </a>
-        <!-- Language switcher positioned outside the collapsible menu -->
-        <div class="language-switcher-container">
-          <a class="nav-link" href="#" id="language-switcher">
-            <i class="fas fa-globe me-1"></i
-            ><span class="language-text">Switch to Hebrew</span>
-          </a>
-        </div>
+        
         <button
           class="navbar-toggler"
           type="button"
@@ -261,73 +217,49 @@
         >
           <span class="navbar-toggler-icon"></span>
         </button>
+        
         <div
-          class="collapse navbar-collapse justify-content-end"
+          class="collapse navbar-collapse"
           id="navbarNav"
         >
           <ul class="navbar-nav">
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('main.home') }}">
-                <i class="fas fa-home me-1"></i
-                ><span data-trans="home">Home</span>
+                <i class="fas fa-home me-1"></i><span data-trans="home">Home</span>
               </a>
             </li>
             {% if current_user.is_authenticated %}
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('main.dashboard') }}">
-                <i class="fas fa-tachometer-alt me-1"></i
-                ><span data-trans="dashboard">Dashboard</span>
+                <i class="fas fa-tachometer-alt me-1"></i><span data-trans="dashboard">Dashboard</span>
               </a>
             </li>
             <li class="nav-item">
-              {% if current_user.is_authenticated and not
-              current_user.events.first() %}
               <a class="nav-link" href="{{ url_for('main.create_event') }}">
-                <i class="fas fa-plus me-1"></i
-                ><span data-trans="createEvent">Create Event</span>
+                <i class="fas fa-plus-circle me-1"></i><span data-trans="createEvent">Create Event</span>
               </a>
-              {% endif %}
             </li>
             {% if current_user.is_admin %}
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('main.admin') }}">
-                <i class="fas fa-cog me-1"></i
-                ><span data-trans="adminPanel">Admin Panel</span>
+                <i class="fas fa-user-shield me-1"></i><span data-trans="adminPanel">Admin Panel</span>
               </a>
             </li>
             {% endif %}
-
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                id="navbarDropdown"
-                role="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                <i class="fas fa-user me-1"></i>{{ current_user.username }}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('main.logout') }}">
+                <i class="fas fa-sign-out-alt me-1"></i><span data-trans="logout">Logout</span>
               </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li>
-                  <a class="dropdown-item" href="{{ url_for('main.logout') }}">
-                    <i class="fas fa-sign-out-alt me-1"></i
-                    ><span data-trans="logout">Logout</span>
-                  </a>
-                </li>
-              </ul>
             </li>
             {% else %}
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('main.login') }}">
-                <i class="fas fa-sign-in-alt me-1"></i
-                ><span data-trans="login">Login</span>
+                <i class="fas fa-sign-in-alt me-1"></i><span data-trans="login">Login</span>
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('main.signup') }}">
-                <i class="fas fa-user-plus me-1"></i
-                ><span data-trans="signup">Signup</span>
+                <i class="fas fa-user-plus me-1"></i><span data-trans="signup">Signup</span>
               </a>
             </li>
             {% endif %}
@@ -335,6 +267,13 @@
         </div>
       </div>
     </nav>
+
+    <!-- Language switcher positioned outside the navbar -->
+    <div class="language-switcher-container">
+      <a class="nav-link" href="#" id="language-switcher">
+        <i class="fas fa-globe me-1"></i><span class="language-text">Switch to Hebrew</span>
+      </a>
+    </div>
 
     <!-- Main Content -->
     <div class="container mt-4 flex-grow-1 mb-5">
