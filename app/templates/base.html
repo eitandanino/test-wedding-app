@@ -144,6 +144,10 @@
       .language-switcher-container {
         margin-left: auto;
         margin-right: 15px;
+        position: fixed;
+        top: 15px;
+        right: 15px;
+        z-index: 1030;
       }
 
       .language-switcher-container .nav-link {
@@ -151,10 +155,30 @@
         font-weight: 500;
         padding: 0.5rem 1rem;
         transition: all 0.3s ease;
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       }
 
       .language-switcher-container .nav-link:hover {
         color: var(--primary-color);
+        background-color: rgba(255, 255, 255, 1);
+      }
+
+      /* Ensure RTL/LTR transitions are smooth */
+      body, .navbar, .container, .btn, .nav-link {
+        transition: all 0.3s ease-in-out;
+      }
+
+      /* Fix button positions in both LTR and RTL modes */
+      html[dir="rtl"] .language-switcher-container {
+        right: auto;
+        left: 15px;
+      }
+
+      /* Ensure other buttons maintain position */
+      .btn, .nav-item {
+        position: relative;
       }
 
       @media (max-width: 768px) {
@@ -169,15 +193,30 @@
 
         /* Ensure language switcher is visible in mobile */
         .language-switcher-container {
+          position: absolute;
+          top: 15px;
+          right: 70px;
           margin-left: 0;
-          margin-right: auto;
-          order: 2;
+          margin-right: 0;
+          z-index: 1031;
+        }
+
+        html[dir="rtl"] .language-switcher-container {
+          right: auto;
+          left: 70px;
         }
 
         .navbar-toggler {
           order: 3;
+          position: relative;
+          z-index: 1030;
         }
       }
+
+      /* Language transition class */
+      .language-transition * {
+              transition: none !important;
+            }
     </style>
     <script>
       // Set language and direction before page renders
@@ -187,6 +226,7 @@
         "dir",
         storedLanguage === "he" ? "rtl" : "ltr"
       );
+      
     </script>
   </head>
   <body class="d-flex flex-column min-vh-100">

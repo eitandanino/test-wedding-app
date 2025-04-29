@@ -32,7 +32,9 @@ def home():
 def signup():
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data)
+        user = User()
+        user.username=form.username.data
+        user.email=form.email.data
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
@@ -117,27 +119,27 @@ def create_event():
             wedding_date_obj = datetime.strptime(str(form.wedding_date.data), '%Y-%m-%d').date()
 
             # Create the event object
-            event = Event(
-                link=link,  # Add the unique link to the event
-                language=form.language.data,
-                groom_name=form.groom_name.data,
-                groom_father_name=form.groom_father_name.data,
-                groom_mother_name=form.groom_mother_name.data,
-                groom_last_name=form.groom_last_name.data,
-                bride_name=form.bride_name.data,
-                bride_father_name=form.bride_father_name.data,
-                bride_mother_name=form.bride_mother_name.data,
-                bride_last_name=form.bride_last_name.data,
-                wedding_date=wedding_date_obj,  # Use the date object
-                hebrew_wedding_date=form.hebrew_wedding_date.data,
-                reception_time=form.reception_time.data.strftime('%H:%M'),  # Format the time
-                wedding_time=form.wedding_time.data.strftime('%H:%M'),  # Format the time
-                hall_name=form.hall_name.data,
-                address=form.address.data,
-                waze_link=form.waze_link.data,
-                template=form.template.data,
-                user_id=current_user.id
-            )
+            event = Event()
+            event.link=link,  # Add the unique link to the event
+            event.language=form.language.data,
+            event.groom_name=form.groom_name.data,
+            event.groom_father_name=form.groom_father_name.data,
+            event.groom_mother_name=form.groom_mother_name.data,
+            event.groom_last_name=form.groom_last_name.data,
+            event.bride_name=form.bride_name.data,
+            event.bride_father_name=form.bride_father_name.data,
+            event.bride_mother_name=form.bride_mother_name.data,
+            event.bride_last_name=form.bride_last_name.data,
+            event.wedding_date=wedding_date_obj,  # Use the date object
+            event.hebrew_wedding_date=form.hebrew_wedding_date.data,
+            event.reception_time=form.reception_time.data.strftime('%H:%M') if form.reception_time.data else None,  # Format the time if data exists
+            event.wedding_time=form.wedding_time.data.strftime('%H:%M') if form.wedding_time.data else None,  # Format the time if data exists
+            event.hall_name=form.hall_name.data,
+            event.address=form.address.data,
+            event.waze_link=form.waze_link.data,
+            event.template=form.template.data,
+            event.user_id=current_user.id
+            
 
             # Handle file upload
             if form.invitation_image.data:
@@ -205,8 +207,8 @@ def edit_event(event_id):
             event.wedding_date = form.wedding_date.data  # Already a date object
 
             # Convert reception_time and wedding_time to time strings
-            event.reception_time = form.reception_time.data.strftime('%H:%M')
-            event.wedding_time = form.wedding_time.data.strftime('%H:%M')
+            event.reception_time = form.reception_time.data.strftime('%H:%M') if form.reception_time.data else None
+            event.wedding_time = form.wedding_time.data.strftime('%H:%M') if form.wedding_time.data else None
 
             event.hebrew_wedding_date = form.hebrew_wedding_date.data
             event.hall_name = form.hall_name.data
@@ -302,15 +304,15 @@ def invitation(link):
             is_vegetarian = (form.is_vegetarian.data == 'yes')
             side = form.side.data
 
-        response = Response(
-            guest_name=form.guest_name.data,
-            phone_number=form.phone_number.data,
-            is_attending=(form.is_attending.data == 'yes'),
-            num_guests=num_guests,
-            is_vegetarian=is_vegetarian,
-            side=side,
-            event_id=event.id
-        )
+        response = Response()
+        response.guest_name=form.guest_name.data,
+        response.phone_number=form.phone_number.data,
+        response.is_attending=(form.is_attending.data == 'yes'),
+        response.num_guests=num_guests,
+        response.is_vegetarian=is_vegetarian,
+        response.side=side,
+        response.event_id=event.id
+        
         db.session.add(response)
         db.session.commit()
         flash('Response submitted successfully!', 'success')
@@ -418,11 +420,10 @@ def upload_guest_list(event_id):
         
         # Add new guests from the uploaded file
         for index, row in df.iterrows():
-            guest = Guest(
-                guest_name=row['Guest Name'],
-                phone_number=row['Phone Number'],
-                event_id=event_id  # Ensure event_id is always set
-            )
+            guest = Guest()
+            guest.guest_name=row['Guest Name'],
+            guest.phone_number=row['Phone Number'],
+            guest.event_id=event_id  # Ensure event_id is always set
             db.session.add(guest)
         db.session.commit()
     except Exception as e:
@@ -638,7 +639,7 @@ def update_guest(response_id):
 @bp.route('/bulk_update_guests', methods=['POST'])
 @login_required
 def bulk_update_guests():
-    response_ids = request.form.get('response_ids').split(',')
+    response_ids = request.form.get('response_ids', '').split(',') if request.form.get('response_ids') else []
     responses = Response.query.filter(Response.id.in_(response_ids)).all()
     
     for response in responses:
@@ -665,9 +666,9 @@ def send_messages(event_id):
     event = Event.query.get_or_404(event_id)
     recipient_type = request.form.get('recipient_type', 'all')
     message_type = request.form.get('message_type', 'custom')
-    subject = request.form.get('subject')
-    content = request.form.get('content')
-    
+    subject = request.form.get('subject', '')
+    content = request.form.get('content', '')
+    responses = []
     # Get the appropriate recipients based on selection
     if recipient_type == 'all':
         responses = Response.query.filter_by(event_id=event_id).all()
@@ -688,7 +689,7 @@ def send_messages(event_id):
                                if guest.phone_number.lstrip('0') not in responded_phones]
         
         # Create a list of "fake" responses for the not_responded guests
-        responses = []
+        
         for guest in not_responded_guests:
             # Create a temporary Response object (not saved to DB)
             temp_response = type('obj', (object,), {

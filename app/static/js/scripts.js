@@ -33,6 +33,10 @@ function updatePageContent(language) {
 
   // Set the direction based on the language
   const html = document.querySelector("html");
+  
+  // Add a class to body during transition
+  document.body.classList.add('language-transition');
+  
   if (language === "he") {
     html.setAttribute("dir", "rtl");
     html.setAttribute("lang", "he");
@@ -43,6 +47,11 @@ function updatePageContent(language) {
 
   // Store the selected language in session storage
   sessionStorage.setItem("selectedLanguage", language);
+  
+  // Remove transition class after animation completes
+  setTimeout(() => {
+    document.body.classList.remove('language-transition');
+  }, 300);
 }
 
 // Language switcher
