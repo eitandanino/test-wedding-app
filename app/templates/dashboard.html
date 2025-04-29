@@ -408,7 +408,7 @@
                       <input
                         type="checkbox"
                         class="form-check-input"
-                        onclick="toggleAttendingAll(this, {{ event_data.event.id }})"
+                        onclick="toggleAttendingAll(this, '{{ event_data.event.id }}')"
                       />
                     </th>
                     <th>Guest Name</th>
@@ -493,7 +493,7 @@
                       <input
                         type="checkbox"
                         class="form-check-input"
-                        onclick="toggleNotAttendingAll(this, {{ event_data.event.id }})"
+                        onclick="toggleNotAttendingAll(this, '{{ event_data.event.id }}')"
                       />
                     </th>
                     <th>Guest Name</th>
