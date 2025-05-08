@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 80" width="100%" height="100%">
+  <!-- Background Shape with Rounded Corners -->
+  <rect x="5" y="10" width="290" height="60" rx="20" ry="20" fill="#f8edeb" stroke="#9d4edd" stroke-width="2" />
+  
+  <!-- Text: invite2you -->
+  <text x="150" y="50" font-family="Cormorant Garamond, serif" font-size="32" font-weight="700" text-anchor="middle" fill="#9d4edd">
+    invite<tspan fill="#7b2cbf">2</tspan>you
+  </text>
+  
+  <!-- Decorative Elements -->
+  <path d="M40,60 Q150,75 260,60" stroke="#c77dff" fill="none" stroke-width="1.5" opacity="0.6" />
+  
+  <!-- Small Heart Icon -->
+  <path d="M270,40 C275,35 280,40 270,50 C260,40 265,35 270,40 Z" fill="#e8c5d8" />
+</svg>

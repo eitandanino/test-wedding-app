@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <!-- Decorative Background Elements -->
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f9f3f3;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f0e4f7;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="600" fill="url(#grad1)" opacity="0.3" />
+  
+  <!-- Decorative Elements -->
+  <path d="M50,300 Q400,100 750,300" stroke="#d8c1e3" fill="none" stroke-width="2" opacity="0.5" />
+  <path d="M50,320 Q400,120 750,320" stroke="#e8d8f0" fill="none" stroke-width="2" opacity="0.5" />
+  <path d="M50,340 Q400,140 750,340" stroke="#f0e4f7" fill="none" stroke-width="2" opacity="0.5" />
+  
+  <!-- Floral Elements -->
+  <g transform="translate(100,150)" opacity="0.8">
+    <!-- Flower 1 -->
+    <path d="M0,0 C10,-10 20,-10 30,0 C40,10 40,20 30,30 C20,40 10,40 0,30 C-10,20 -10,10 0,0 Z" fill="#e8c5d8" />
+    <circle cx="15" cy="15" r="5" fill="#d8a5c8" />
+  </g>
+  
+  <g transform="translate(650,200)" opacity="0.8">
+    <!-- Flower 2 -->
+    <path d="M0,0 C10,-10 20,-10 30,0 C40,10 40,20 30,30 C20,40 10,40 0,30 C-10,20 -10,10 0,0 Z" fill="#e8c5d8" />
+    <circle cx="15" cy="15" r="5" fill="#d8a5c8" />
+  </g>
+  
+  <!-- Wedding Rings -->
+  <g transform="translate(400,300)">
+    <circle cx="-25" cy="0" r="40" fill="none" stroke="#d4af37" stroke-width="8" opacity="0.9" />
+    <circle cx="25" cy="0" r="40" fill="none" stroke="#d4af37" stroke-width="8" opacity="0.9" />
+  </g>
+  
+  <!-- Heart -->
+  <path d="M400,400 C450,350 500,400 400,480 C300,400 350,350 400,400 Z" fill="#e8c5d8" opacity="0.6" />
+  
+  <!-- Decorative Lines -->
+  <line x1="250" y1="500" x2="550" y2="500" stroke="#d8c1e3" stroke-width="2" opacity="0.5" />
+  <line x1="300" y1="520" x2="500" y2="520" stroke="#d8c1e3" stroke-width="2" opacity="0.5" />
+</svg>
