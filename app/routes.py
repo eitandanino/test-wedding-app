@@ -293,28 +293,49 @@ def invitation(link):
     )
 
     if form.validate_on_submit():
-        if form.is_attending.data == 'no':
+        # Process form data
+        is_attending = form.is_attending.data == 'yes'
+        
+        if is_attending:
+            num_guests = form.num_guests.data
+            is_vegetarian = form.is_vegetarian.data == 'yes'
+            side = form.side.data
+        else:
             num_guests = None
             is_vegetarian = None
             side = None
-        else:
-            num_guests = form.num_guests.data
-            is_vegetarian = (form.is_vegetarian.data == 'yes')
-            side = form.side.data
-
-        response = Response(
-            guest_name=form.guest_name.data,
+            
+        # Check if a response with this phone number already exists for this event
+        existing_response = Response.query.filter_by(
             phone_number=form.phone_number.data,
-            is_attending=(form.is_attending.data == 'yes'),
-            num_guests=num_guests,
-            is_vegetarian=is_vegetarian,
-            side=side,
             event_id=event.id
-        )
-        db.session.add(response)
+        ).first()
+        
+        if existing_response:
+            # Update existing response
+            existing_response.guest_name = form.guest_name.data
+            existing_response.is_attending = is_attending
+            existing_response.num_guests = num_guests
+            existing_response.is_vegetarian = is_vegetarian
+            existing_response.side = side
+            flash('Your response has been updated!', 'success')
+        else:
+            # Create new response
+            response = Response(
+                guest_name=form.guest_name.data,
+                phone_number=form.phone_number.data,
+                is_attending=is_attending,
+                num_guests=num_guests,
+                is_vegetarian=is_vegetarian,
+                side=side,
+                event_id=event.id
+            )
+            db.session.add(response)
+            flash('Response submitted successfully!', 'success')
+            
         db.session.commit()
-        flash('Response submitted successfully!', 'success')
         return redirect(url_for('main.invitation', link=link))
+        
     return render_template('invitation.html', event=event, form=form, google_calendar_link=google_calendar_link)
 
 
